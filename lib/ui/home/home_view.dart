@@ -21,7 +21,8 @@ class HomeView extends StatelessWidget {
               // New game button
               ElevatedButton(
                 style: ButtonStyle(
-                    padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(32, 16, 32, 16)),
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.fromLTRB(32, 16, 32, 16)),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(60.0),

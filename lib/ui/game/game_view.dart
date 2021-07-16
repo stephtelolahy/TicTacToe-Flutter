@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tictactoe/model/game.dart';
 
+import '../../model/game.dart';
 import 'game_model.dart';
 import 'widget/field_widget.dart';
 
 class GameView extends StatelessWidget {
-
   static const SYMBOLS = {
     Game.EMPTY_SPACE: "",
     Game.HUMAN: "X",
@@ -18,25 +17,29 @@ class GameView extends StatelessWidget {
     return ChangeNotifierProvider<GameModel>(
         create: (context) => GameModel(),
         child: Consumer<GameModel>(
-            builder: (context, model, child) =>
-                Scaffold(
-                  appBar: AppBar(
-                    title: Text("Tic Tac Toe Flutter"),
-                    actions: [
-                      IconButton(
-                          onPressed: () =>
-                              Provider.of<GameModel>(context, listen: false)
-                                  .restart(),
-                          icon: Icon(Icons.refresh))
-                    ],
-                  ),
-                  body: Column(
+            builder: (context, model, child) => Scaffold(
+                appBar: AppBar(
+                  title: Text("Tic Tac Toe Flutter"),
+                  actions: [
+                    IconButton(
+                        onPressed: () =>
+                            Provider.of<GameModel>(context, listen: false)
+                                .restart(),
+                        icon: Icon(Icons.refresh))
+                  ],
+                ),
+                body: Container(
+                  constraints: BoxConstraints.expand(),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.all(48),
                         child: _header(model, context),
                       ),
-                      Expanded(
+                      Container(
+                        height: 400,
+                        width: 400,
                         child: GridView.count(
                           crossAxisCount: 3,
                           // generate the widgets that will display the board
@@ -51,7 +54,7 @@ class GameView extends StatelessWidget {
                       ),
                     ],
                   ),
-                )));
+                ))));
   }
 
   Widget _header(GameModel model, BuildContext context) {

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../model/minimax_ai.dart';
-import '../../model/random_ai.dart';
 
 import '../../model/game.dart';
+import '../../model/minimax_ai.dart';
 
 class GameModel extends ChangeNotifier {
   Game _game = Game(
