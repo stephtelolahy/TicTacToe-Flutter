@@ -46,4 +46,13 @@ class Game {
     return STATUS_NO_WINNERS_YET;
   }
 
+  List<int> possibleMoves() {
+    List<int> result = [];
+    for (var i = 0; i < board.length; i++) {
+      if (board[i] == EMPTY_SPACE) {
+        result.add(i);
+      }
+    }
+    return result;
+  }
 }

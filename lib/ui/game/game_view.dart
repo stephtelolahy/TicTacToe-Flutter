@@ -6,80 +6,74 @@ import 'game_model.dart';
 import 'widget/field_widget.dart';
 
 class GameView extends StatelessWidget {
+
+  static const SYMBOLS = {
+    Game.EMPTY_SPACE: "",
+    Game.HUMAN: "X",
+    Game.AI_PLAYER: "O"
+  };
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<GameModel>(
         create: (context) => GameModel(),
-        child: Consumer<GameModel>(builder: (context, model, child) {
-          if (model.status != Game.STATUS_NO_WINNERS_YET) {
-            Future.delayed(const Duration(milliseconds: 1), () {
-              _showGameOver(model.status, context);
-            });
-          }
-
-          return Scaffold(
-            appBar: AppBar(
-              title: Text("Tic Tac Toe Flutter"),
-            ),
-            body: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(48),
-                  child: Text(
-                    "Your turn ${model.turn}",
-                    style: TextStyle(fontSize: 25),
+        child: Consumer<GameModel>(
+            builder: (context, model, child) =>
+                Scaffold(
+                  appBar: AppBar(
+                    title: Text("Tic Tac Toe Flutter"),
+                    actions: [
+                      IconButton(
+                          onPressed: () =>
+                              Provider.of<GameModel>(context, listen: false)
+                                  .restart(),
+                          icon: Icon(Icons.refresh))
+                    ],
                   ),
-                ),
-                Expanded(
-                  child: GridView.count(
-                    crossAxisCount: 3,
-                    // generate the widgets that will display the board
-                    children: List.generate(9, (idx) {
-                      return FieldWidget(
-                        idx: idx,
-                        onTap: (idx) => model.tap(idx),
-                        playerSymbol: model.board[idx],
-                      );
-                    }),
+                  body: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(48),
+                        child: _header(model, context),
+                      ),
+                      Expanded(
+                        child: GridView.count(
+                          crossAxisCount: 3,
+                          // generate the widgets that will display the board
+                          children: List.generate(9, (idx) {
+                            return FieldWidget(
+                              idx: idx,
+                              onTap: (idx) => model.tap(idx),
+                              playerSymbol: SYMBOLS[model.board[idx]]!,
+                            );
+                          }),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-          );
-        }));
+                )));
   }
 
-  _showGameOver(int winner, BuildContext context) {
+  Widget _header(GameModel model, BuildContext context) {
     var title = "Game over!";
-    var content = "";
-    switch (winner) {
+    switch (model.status) {
       case Game.HUMAN:
         title = "Congratulations!";
-        content = "You managed to beat an unbeatable AI!";
         break;
       case Game.AI_PLAYER:
-        title = "Game Over!";
-        content = "You lose :(";
+        title = "You lose :(";
         break;
-      default:
+
+      case Game.STATUS_DRAW:
         title = "Draw!";
-        content = "No winners here.";
+        break;
+
+      default:
+        String symbol = SYMBOLS[model.turn]!;
+        title = "${model.isYourTurn ? "Your" : "CPU"} turn $symbol";
+        break;
     }
 
-    showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text(title),
-                content: Text(content),
-                actions: <Widget>[
-                  new TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: Text("Restart"))
-                ],
-              );
-            })
-        .then((value) =>
-            Provider.of<GameModel>(context, listen: false).restart());
+    return Text(title, style: TextStyle(fontSize: 25));
   }
 }
