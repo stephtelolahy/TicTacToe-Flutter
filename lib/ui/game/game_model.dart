@@ -1,32 +1,29 @@
 import 'package:flutter/material.dart';
 
+import '../../model/game.dart';
+
 class GameModel extends ChangeNotifier {
-  static String _P1 = "X";
-  static String _P2 = "O";
+  static const SYMBOLS = {
+    Game.EMPTY_SPACE: "",
+    Game.HUMAN: "X",
+    Game.AI_PLAYER: "O"
+  };
 
-  List<String> _board = ["", "", "", "", "", "", "", "", ""];
-  String _turn = _P1;
+  Game _game = Game();
 
-  List<String> get board => _board;
+  List<String> get board => _game.board.map((e) => SYMBOLS[e]!).toList();
 
-  String get turn => _turn;
+  String get turn => SYMBOLS[_game.turn]!;
 
-  void tap(int idx) {
-    if (_board[idx].isNotEmpty) {
-      print("Illegal move");
-      return;
-    }
+  int get status => _game.status();
 
-    _board[idx] = turn;
-    _turn = _opponent(turn);
+  void tap(int position) {
+    _game.performMove(position);
     notifyListeners();
   }
 
-  String _opponent(String player) {
-    if (player == _P1) {
-      return _P2;
-    } else {
-      return _P1;
-    }
+  void restart() {
+    _game = Game();
+    notifyListeners();
   }
 }
