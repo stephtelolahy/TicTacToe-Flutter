@@ -35,7 +35,7 @@ class HomeView extends StatelessWidget {
                 },
               ),
               // Win statistic widget
-              Text("No AI wins yet!", style: TextStyle(fontSize: 15)),
+              Text("No wins yet!", style: TextStyle(fontSize: 15)),
             ],
           ),
         ));

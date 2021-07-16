@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:tictactoe/model/ai.dart';
+import '../../model/minimax_ai.dart';
+import '../../model/random_ai.dart';
 
 import '../../model/game.dart';
 
 class GameModel extends ChangeNotifier {
-  Game _game = Game();
+  Game _game = Game(
+      board: List.generate(9, (idx) => Game.EMPTY_SPACE), turn: Game.HUMAN);
 
-  MCTSAi _ai = MCTSAi();
+  //RandomAi _ai = RandomAi();
+  MiniMaxAi _ai = MiniMaxAi();
 
   List<int> get board => _game.board;
 
@@ -32,7 +35,8 @@ class GameModel extends ChangeNotifier {
     _game.performMove(position);
     notifyListeners();
 
-    if (_game.turn == Game.AI_PLAYER && _game.status() == Game.STATUS_NO_WINNERS_YET) {
+    if (_game.turn == Game.AI_PLAYER &&
+        _game.status() == Game.STATUS_NO_WINNERS_YET) {
       Future.delayed(const Duration(milliseconds: 1000), () {
         _runAI();
       });
@@ -40,12 +44,13 @@ class GameModel extends ChangeNotifier {
   }
 
   void restart() {
-    _game = Game();
+    _game = Game(
+        board: List.generate(9, (idx) => Game.EMPTY_SPACE), turn: Game.HUMAN);
     notifyListeners();
   }
 
   void _runAI() {
-    int bestMove = _ai.findBestMove(_game, 500);
+    int bestMove = _ai.findBestMove(_game);
     _game.performMove(bestMove);
     notifyListeners();
   }

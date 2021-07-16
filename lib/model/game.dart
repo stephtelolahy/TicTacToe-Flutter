@@ -17,8 +17,10 @@ class Game {
     [2, 4, 6],
   ];
 
-  List<int> board = List.generate(9, (idx) => EMPTY_SPACE);
-  int turn = HUMAN;
+  List<int> board;
+  int turn;
+
+  Game({required this.board, required this.turn});
 
   void performMove(int position) {
     if (board[position] != EMPTY_SPACE) {
@@ -27,7 +29,11 @@ class Game {
     }
 
     board[position] = turn;
-    turn = -1 * turn;
+    turn = opponent(turn);
+  }
+
+  static int opponent(int player) {
+    return -1 * player;
   }
 
   int status() {
