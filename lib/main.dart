@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'ui/HomeView.dart';
+import 'package:tictactoe/routes.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,7 +14,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.amber
       ),
-      home: HomeView(),
+      initialRoute: '/',
+      routes: routes(),
     );
   }
 }
