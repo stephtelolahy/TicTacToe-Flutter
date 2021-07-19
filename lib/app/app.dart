@@ -8,7 +8,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'Tic Tac Toe',
       theme: ThemeData(primarySwatch: Colors.amber),
-      initialRoute: '/',
+      initialRoute: '/login',
       routes: routes(),
     );
   }
