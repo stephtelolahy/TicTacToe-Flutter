@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../model/game.dart';
+import '../../core/game.dart';
 import 'game_model.dart';
 import 'widget/field_widget.dart';
 
 class GameView extends StatelessWidget {
-  static const SYMBOLS = {
-    Game.EMPTY_SPACE: "",
-    Game.HUMAN: "X",
-    Game.AI_PLAYER: "O"
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +42,7 @@ class GameView extends StatelessWidget {
                             return FieldWidget(
                               idx: idx,
                               onTap: (idx) => model.tap(idx),
-                              playerSymbol: SYMBOLS[model.board[idx]]!,
+                              playerSymbol: model.board[idx],
                             );
                           }),
                         ),
@@ -72,7 +67,7 @@ class GameView extends StatelessWidget {
         break;
 
       default:
-        String symbol = SYMBOLS[model.turn]!;
+        String symbol = model.turn;
         title = "${model.isYourTurn ? "Your" : "CPU"} turn $symbol";
         break;
     }

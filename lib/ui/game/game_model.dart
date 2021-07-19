@@ -1,22 +1,31 @@
 import 'package:flutter/material.dart';
 
-import '../../model/game.dart';
-import '../../model/minimax_ai.dart';
+import '../../core/game.dart';
+import '../../core/minimax_ai.dart';
 
 class GameModel extends ChangeNotifier {
+  static const SYMBOLS = {
+    Game.EMPTY_SPACE: "",
+    Game.HUMAN: "X",
+    Game.AI_PLAYER: "O"
+  };
+
   Game _game = Game(
       board: List.generate(9, (idx) => Game.EMPTY_SPACE), turn: Game.HUMAN);
 
-  //RandomAi _ai = RandomAi();
   MiniMaxAi _ai = MiniMaxAi();
 
-  List<int> get board => _game.board;
+  // properties
 
-  int get turn => _game.turn;
+  List<String> get board => _game.board.map((e) => SYMBOLS[e]!).toList();
+
+  String get turn => SYMBOLS[_game.turn]!;
 
   bool get isYourTurn => _game.turn == Game.HUMAN;
 
   int get status => _game.status();
+  
+  // actions
 
   void tap(int position) {
     if (_game.status() != Game.STATUS_NO_WINNERS_YET) {

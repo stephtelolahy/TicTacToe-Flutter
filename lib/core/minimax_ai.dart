@@ -1,7 +1,6 @@
 import 'game.dart';
 
 class MiniMaxAi {
-  // arbitrary values for winning, draw and losing conditions
   static const int WIN_SCORE = 100;
   static const int DRAW_SCORE = 0;
   static const int LOSE_SCORE = -100;
