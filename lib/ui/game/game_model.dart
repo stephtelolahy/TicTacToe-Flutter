@@ -24,7 +24,7 @@ class GameModel extends ChangeNotifier {
   bool get isYourTurn => _game.turn == Game.HUMAN;
 
   int get status => _game.status();
-  
+
   // actions
 
   void tap(int position) {

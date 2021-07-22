@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 
 import 'login_model.dart';
 
@@ -18,37 +19,28 @@ class LoginView extends StatelessWidget {
                 body: Container(
                     constraints: BoxConstraints.expand(),
                     child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Column(children: [
-                            Text(
-                              "Flutter Tic Tac Toe!",
-                              style: TextStyle(fontSize: 32),
-                            ),
-                            SizedBox(height: 50,),
-                            Text(
-                              "To play you will need to signIn first,",
-                            ),
-                          ]),
                           // Welcome text
-
-                          // New game button
-                          ElevatedButton(
-                            style: ButtonStyle(
-                                padding: MaterialStateProperty.all(
-                                    EdgeInsets.fromLTRB(32, 16, 32, 16)),
-                                shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(60.0),
-                                ))),
-                            child: Text(
-                              "SignIn",
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            onPressed: () => Navigator.pushReplacementNamed(context, '/home'),
-                          )
+                          Text(
+                            "Flutter Tic Tac Toe!",
+                            style: TextStyle(fontSize: 32),
+                          ),
+                          SizedBox(
+                            height: 50,
+                          ),
+                          Text(
+                            "To play you will need to signIn first,",
+                          ),
+                          SizedBox(
+                            height: 100,
+                          ),
+                          // SignIn button
+                          SignInButton(
+                            Buttons.Google,
+                            onPressed: () async => await model.signInWithGoogle(),
+                          ),
                         ])))));
   }
 }

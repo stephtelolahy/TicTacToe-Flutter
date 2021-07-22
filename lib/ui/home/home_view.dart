@@ -8,8 +8,7 @@ class HomeView extends StatelessWidget {
           title: Text("Tic Tac Toe Flutter"),
           actions: [
             IconButton(
-                onPressed: () =>
-                    Navigator.pushReplacementNamed(context, '/'),
+                onPressed: () => Navigator.pushReplacementNamed(context, '/'),
                 icon: Icon(Icons.logout))
           ],
         ),
