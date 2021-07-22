@@ -6,6 +6,12 @@ class HomeView extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text("Tic Tac Toe Flutter"),
+          actions: [
+            IconButton(
+                onPressed: () =>
+                    Navigator.pushReplacementNamed(context, '/'),
+                icon: Icon(Icons.logout))
+          ],
         ),
         body: Container(
           constraints: BoxConstraints.expand(),
