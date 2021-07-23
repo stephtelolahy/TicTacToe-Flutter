@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:provider/provider.dart';
 
 import 'login_model.dart';
 
@@ -10,9 +10,7 @@ class LoginView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<LoginModel>(
         create: (context) {
-          final model = LoginModel();
-          model.initialize();
-          return model;
+          return LoginModel();
         },
         child: Consumer<LoginModel>(
             builder: (context, model, child) => Scaffold(
@@ -39,7 +37,8 @@ class LoginView extends StatelessWidget {
                           // SignIn button
                           SignInButton(
                             Buttons.Google,
-                            onPressed: () async => await model.signInWithGoogle(),
+                            onPressed: () async =>
+                                await model.signInWithGoogle(),
                           ),
                         ])))));
   }

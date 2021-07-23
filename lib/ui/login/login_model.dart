@@ -1,24 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-final FirebaseAuth _auth = FirebaseAuth.instance;
-
 class LoginModel extends ChangeNotifier {
-  bool _signedIn = false;
-
-  bool get signedIn => _signedIn;
-
-  void initialize() async {
-    await Firebase.initializeApp();
-
-    _auth.authStateChanges().listen((User? user) {
-      _signedIn = user != null;
-      notifyListeners();
-    });
-  }
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<void> signInWithGoogle() async {
     try {
