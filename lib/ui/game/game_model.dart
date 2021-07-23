@@ -10,12 +10,11 @@ class GameModel extends ChangeNotifier {
     Game.AI_PLAYER: "O"
   };
 
-  Game _game = Game(
-      board: List.generate(9, (idx) => Game.EMPTY_SPACE), turn: Game.HUMAN);
+  Game _game = Game.newGame();
 
   MiniMaxAi _ai = MiniMaxAi();
 
-  // properties
+  // states
 
   List<String> get board => _game.board.map((e) => SYMBOLS[e]!).toList();
 
@@ -27,39 +26,30 @@ class GameModel extends ChangeNotifier {
 
   // actions
 
-  void tap(int position) {
-    if (_game.status() != Game.STATUS_NO_WINNERS_YET) {
-      return;
-    }
-
-    if (_game.turn != Game.HUMAN) {
-      return;
-    }
-
-    if (!_game.possibleMoves().contains(position)) {
-      return;
-    }
-
-    _game.performMove(position);
-    notifyListeners();
-
+  void update() {
     if (_game.turn == Game.AI_PLAYER &&
         _game.status() == Game.STATUS_NO_WINNERS_YET) {
       Future.delayed(const Duration(milliseconds: 1000), () {
-        _runAI();
+        int bestMove = _ai.findBestMove(_game);
+        _game.performMove(bestMove);
+        notifyListeners();
       });
     }
   }
 
-  void restart() {
-    _game = Game(
-        board: List.generate(9, (idx) => Game.EMPTY_SPACE), turn: Game.HUMAN);
-    notifyListeners();
+  void tap(int position) {
+    if (_game.turn == Game.HUMAN &&
+        _game.status() == Game.STATUS_NO_WINNERS_YET &&
+        _game.possibleMoves().contains(position)) {
+      _game.performMove(position);
+      notifyListeners();
+      update();
+    }
   }
 
-  void _runAI() {
-    int bestMove = _ai.findBestMove(_game);
-    _game.performMove(bestMove);
+  void restart() {
+    _game = Game.newGame();
     notifyListeners();
+    update();
   }
 }

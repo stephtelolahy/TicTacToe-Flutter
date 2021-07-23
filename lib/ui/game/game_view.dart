@@ -9,7 +9,11 @@ class GameView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<GameModel>(
-        create: (context) => GameModel(),
+        create: (context) {
+          final model = GameModel();
+          model.update();
+          return model;
+        },
         child: Consumer<GameModel>(
             builder: (context, model, child) => Scaffold(
                 appBar: AppBar(

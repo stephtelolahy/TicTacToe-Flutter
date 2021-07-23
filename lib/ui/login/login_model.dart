@@ -6,6 +6,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 class LoginModel extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // actions
+
   Future<void> signInWithGoogle() async {
     try {
       UserCredential userCredential;

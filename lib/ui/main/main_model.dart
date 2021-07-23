@@ -7,7 +7,11 @@ enum UserState { unknown, signedIn, signedOut }
 class MainModel extends ChangeNotifier {
   UserState _userState = UserState.unknown;
 
+  // states
+
   UserState get userState => _userState;
+
+  // actions
 
   void initialize() async {
     await Firebase.initializeApp();
