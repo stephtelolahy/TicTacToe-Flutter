@@ -1,3 +1,5 @@
+import 'dart:math';
+
 class Game {
   static const int HUMAN = 1;
   static const int AI_PLAYER = -1;
@@ -21,6 +23,13 @@ class Game {
   int turn;
 
   Game({required this.board, required this.turn});
+
+  static Game newGame() {
+    final board = List.generate(9, (idx) => EMPTY_SPACE);
+    Random random = new Random();
+    final turn = random.nextBool() ? Game.HUMAN : Game.AI_PLAYER;
+    return Game(board: board, turn: turn);
+  }
 
   void performMove(int position) {
     if (board[position] != EMPTY_SPACE) {
