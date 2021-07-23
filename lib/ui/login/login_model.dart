@@ -13,25 +13,33 @@ class LoginModel extends ChangeNotifier {
       UserCredential userCredential;
 
       if (kIsWeb) {
+        // Create a Google auth provider
         var googleProvider = GoogleAuthProvider();
+        // Once signed in, return the UserCredential
         userCredential = await _auth.signInWithPopup(googleProvider);
       } else {
-        final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+        // Trigger the authentication flow
+        final GoogleSignInAccount? googleUser = await GoogleSignIn(scopes: []).signIn();
         if (googleUser == null) {
           return;
         }
 
+        // Obtain the auth details from the request
         final GoogleSignInAuthentication googleAuth =
             await googleUser.authentication;
+
+        // Create a new credential
         final googleAuthCredential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
         );
+
+        // Once signed in, return the UserCredential
         userCredential = await _auth.signInWithCredential(googleAuthCredential);
       }
 
       final user = userCredential.user;
-      print('Sign In ${user!.uid} with Google');
+      print('signInWithGoogle: ${user!.displayName}');
     } catch (e) {
       print(e);
     }

@@ -14,10 +14,9 @@ class MainModel extends ChangeNotifier {
   // actions
 
   void initialize() async {
-    await Firebase.initializeApp();
-
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       _userState = user != null ? UserState.signedIn : UserState.signedOut;
+      print("AuthStateChanges User: ${user?.displayName}");
       notifyListeners();
     });
   }

@@ -28,7 +28,7 @@ class HomeView extends StatelessWidget {
                     children: [
                       // Welcome text
                       Text(
-                        "Welcome to Flutter Tic Tac Toe!",
+                        "Welcome ${model.userName}!",
                         style: TextStyle(fontSize: 20),
                       ),
                       // New game button
