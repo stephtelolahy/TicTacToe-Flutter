@@ -3,8 +3,12 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../data/services/database.dart';
+import '../../locator.dart';
+
 class LoginModel extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final _databaseService = locator<DatabaseService>();
 
   // actions
 
@@ -13,13 +17,14 @@ class LoginModel extends ChangeNotifier {
       UserCredential userCredential;
 
       if (kIsWeb) {
-        // Create a Google auth provider
+        // Create a Googlew auth provider
         var googleProvider = GoogleAuthProvider();
         // Once signed in, return the UserCredential
         userCredential = await _auth.signInWithPopup(googleProvider);
       } else {
         // Trigger the authentication flow
-        final GoogleSignInAccount? googleUser = await GoogleSignIn(scopes: []).signIn();
+        final GoogleSignInAccount? googleUser =
+            await GoogleSignIn(scopes: []).signIn();
         if (googleUser == null) {
           return;
         }
@@ -40,6 +45,10 @@ class LoginModel extends ChangeNotifier {
 
       final user = userCredential.user;
       print('signInWithGoogle: ${user!.displayName}');
+
+      // Add user in firebase Database
+      await _databaseService.createUser(
+          user.uid, user.displayName, user.photoURL);
     } catch (e) {
       print(e);
     }
