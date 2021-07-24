@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-import '../../core/game.dart';
-import '../../core/minimax_ai.dart';
+import '../../data/engine/game.dart';
+import '../../data/engine/minimax_ai.dart';
 
 class GameModel extends ChangeNotifier {
   static const SYMBOLS = {

@@ -1,14 +1,16 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class HomeModel extends ChangeNotifier {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+import '../../data/services/auth.dart';
+import '../../locator.dart';
 
-  String get userName => _auth.currentUser!.displayName!;
+class HomeModel extends ChangeNotifier {
+  final _authService = locator<AuthService>();
+
+  String get userName => _authService.userName();
 
   // actions
 
   Future<void> logout() async {
-    await _auth.signOut();
+    await _authService.signOut();
   }
 }

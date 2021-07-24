@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tictactoe/ui/home/home_view.dart';
-import 'package:tictactoe/ui/login/login_view.dart';
-import 'package:tictactoe/ui/main/main_model.dart';
+
+import '../home/home_view.dart';
+import '../login/login_view.dart';
+import 'main_model.dart';
 
 class MainView extends StatelessWidget {
   @override
@@ -12,17 +13,10 @@ class MainView extends StatelessWidget {
       model.initialize();
       return model;
     }, child: Consumer<MainModel>(builder: (context, model, child) {
-      switch (model.userState) {
-        case UserState.unknown:
-          return Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-
-        case UserState.signedIn:
-          return HomeView();
-
-        case UserState.signedOut:
-          return LoginView();
+      if (model.signedIn) {
+        return HomeView();
+      } else {
+        return LoginView();
       }
     }));
   }
