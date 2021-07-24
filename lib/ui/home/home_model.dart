@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../data/models/user_status.dart';
 import '../../data/services/auth.dart';
 import '../../data/services/database.dart';
 import '../../locator.dart';
@@ -14,7 +15,8 @@ class HomeModel extends ChangeNotifier {
     _authService.signOut();
   }
 
-  playOnline() {
-    _databaseService.setStatusWaiting(_authService.userId());
+  Future<void> playOnline() async {
+    await _databaseService.setStatus(_authService.userId(), UserStatusWaiting());
+    await _databaseService.match();
   }
 }

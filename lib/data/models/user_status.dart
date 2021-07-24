@@ -1,7 +1,12 @@
-class UserStatus {
-  final bool waiting;
-  final String? gameId;
-  final int? player;
+abstract class UserStatus {}
 
-  UserStatus(this.waiting, this.gameId, this.player);
+class UserStatusIdle extends UserStatus {}
+
+class UserStatusWaiting extends UserStatus {}
+
+class UserStatusPlaying extends UserStatus {
+  final String gameId;
+  final int player;
+
+  UserStatusPlaying(this.gameId, this.player);
 }

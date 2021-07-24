@@ -7,10 +7,9 @@ import '../models/user.dart' as model;
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  observeAuthStateChanges(void onChange(bool signedIn)) {
+  observeAuthState(void onChange(String? userId)) {
     _auth.authStateChanges().listen((User? user) {
-      final signedIn = user != null;
-      onChange(signedIn);
+      onChange(user?.uid);
     });
   }
 

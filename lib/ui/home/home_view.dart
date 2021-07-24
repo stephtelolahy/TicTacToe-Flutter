@@ -20,18 +20,21 @@ class HomeView extends StatelessWidget {
                         onPressed: () => model.logout())
                   ],
                 ),
-                body: Container(
-                  constraints: BoxConstraints.expand(),
+                body: Center(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // Welcome text
                       Text(
                         "Welcome ${model.userName}!",
                         style: TextStyle(fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(
+                        height: 40,
                       ),
                       // New game button
+
                       ElevatedButton(
                         style: ButtonStyle(
                             padding: MaterialStateProperty.all(
@@ -41,29 +44,28 @@ class HomeView extends StatelessWidget {
                               borderRadius: BorderRadius.circular(60.0),
                             ))),
                         child: Text(
-                          "Play",
+                          "PLAY",
                           style: TextStyle(fontSize: 20),
+                        ),
+                        onPressed: () => model.playOnline(),
+                      ),
+                      SizedBox(
+                        height: 40,
+                      ),
+                      TextButton(
+                        child: Text(
+                          "TRAINING",
                         ),
                         onPressed: () {
                           Navigator.pushNamed(context, '/game');
                         },
                       ),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                            padding: MaterialStateProperty.all(
-                                EdgeInsets.fromLTRB(32, 16, 32, 16)),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(60.0),
-                            ))),
+                      TextButton(
                         child: Text(
-                          "Online",
-                          style: TextStyle(fontSize: 20),
+                          "LEADERBOARD",
                         ),
-                        onPressed: () => model.playOnline(),
+                        onPressed: null,
                       ),
-                      // Win statistic widget
-                      Text("No wins yet!", style: TextStyle(fontSize: 15)),
                     ],
                   ),
                 ))));
