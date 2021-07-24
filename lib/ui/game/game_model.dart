@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../data/engine/game.dart';
 import '../../data/engine/minimax_ai.dart';
 
@@ -25,7 +26,7 @@ class GameModel extends ChangeNotifier {
 
   // actions
 
-  void update() {
+  update() {
     if (_game.turn == Game.AI_PLAYER &&
         _game.status() == Game.STATUS_NO_WINNERS_YET) {
       Future.delayed(const Duration(milliseconds: 1000), () {
@@ -36,7 +37,7 @@ class GameModel extends ChangeNotifier {
     }
   }
 
-  void tap(int position) {
+  tap(int position) {
     if (_game.turn == Game.HUMAN &&
         _game.status() == Game.STATUS_NO_WINNERS_YET &&
         _game.possibleMoves().contains(position)) {
@@ -46,7 +47,7 @@ class GameModel extends ChangeNotifier {
     }
   }
 
-  void restart() {
+  restart() {
     _game = Game.newGame();
     notifyListeners();
     update();

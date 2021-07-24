@@ -37,8 +37,7 @@ class LoginView extends StatelessWidget {
                           // SignIn button
                           SignInButton(
                             Buttons.Google,
-                            onPressed: () async =>
-                                await model.signInWithGoogle(),
+                            onPressed: () => model.signInWithGoogle(),
                           ),
                         ])))));
   }

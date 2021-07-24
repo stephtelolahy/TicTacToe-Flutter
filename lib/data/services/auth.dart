@@ -7,7 +7,7 @@ import '../models/user.dart' as model;
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  void observeAuthStateChanges(void onChange(bool signedIn)) {
+  observeAuthStateChanges(void onChange(bool signedIn)) {
     _auth.authStateChanges().listen((User? user) {
       final signedIn = user != null;
       onChange(signedIn);
@@ -16,6 +16,10 @@ class AuthService {
 
   String userName() {
     return _auth.currentUser?.displayName ?? '';
+  }
+
+  String userId() {
+    return _auth.currentUser?.uid ?? '';
   }
 
   Future<model.User> signInWithGoogle() async {

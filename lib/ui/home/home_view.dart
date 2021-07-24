@@ -41,12 +41,26 @@ class HomeView extends StatelessWidget {
                               borderRadius: BorderRadius.circular(60.0),
                             ))),
                         child: Text(
-                          "New game!",
+                          "Play",
                           style: TextStyle(fontSize: 20),
                         ),
                         onPressed: () {
                           Navigator.pushNamed(context, '/game');
                         },
+                      ),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                            padding: MaterialStateProperty.all(
+                                EdgeInsets.fromLTRB(32, 16, 32, 16)),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(60.0),
+                            ))),
+                        child: Text(
+                          "Online",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        onPressed: () => model.playOnline(),
                       ),
                       // Win statistic widget
                       Text("No wins yet!", style: TextStyle(fontSize: 15)),

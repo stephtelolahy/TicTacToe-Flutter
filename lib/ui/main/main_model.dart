@@ -10,7 +10,7 @@ class MainModel extends ChangeNotifier {
 
   bool get signedIn => _signedIn;
 
-  void initialize() async {
+  initialize() async {
     _authService.observeAuthStateChanges((value) {
       _signedIn = value;
       notifyListeners();
