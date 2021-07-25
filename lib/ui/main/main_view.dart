@@ -16,13 +16,14 @@ class MainView extends StatelessWidget {
       model.initialize();
       return model;
     }, child: Consumer<MainModel>(builder: (context, model, child) {
-      if (model.status == null) {
+      final status = model.status;
+      if (status == null) {
         return LoginView();
-      } else if (model.status is UserStatusIdle) {
+      } else if (status is UserStatusIdle) {
         return HomeView();
-      } else if (model.status is UserStatusWaiting) {
+      } else if (status is UserStatusWaiting) {
         return WaitingView();
-      } else if (model.status is UserStatusPlaying) {
+      } else if (status is UserStatusPlaying) {
         return GameView();
       } else {
         return Scaffold();
