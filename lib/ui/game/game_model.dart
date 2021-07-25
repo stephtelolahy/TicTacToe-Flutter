@@ -12,13 +12,22 @@ class GameModel extends ChangeNotifier {
 
   final _authService = locator<AuthService>();
   final _databaseService = locator<DatabaseService>();
-  final int _controlledPlayer = Game.P1;
-  final int _aiPlayer = Game.P2;
+
+  final String? gameId;
+  late int _controlledPlayer;
+  late int? _aiPlayer;
 
   Game _game = Game.newGame();
   MiniMaxAi _ai = MiniMaxAi();
 
-  // states
+  GameModel(this.gameId);
+
+  initialize() {
+    _controlledPlayer = Game.P1;
+    _aiPlayer = Game.P2;
+    _runAi();
+    // TODO: initialize things
+  }
 
   List<String> get board => _game.board.map((e) => _SYMBOLS[e]!).toList();
 
@@ -36,11 +45,11 @@ class GameModel extends ChangeNotifier {
         _game.possibleMoves().contains(position)) {
       _game.performMove(position);
       notifyListeners();
-      update();
+      _runAi();
     }
   }
 
-  update() {
+  _runAi() {
     if (_game.turn == _aiPlayer &&
         _game.status() == Game.STATUS_NO_WINNERS_YET) {
       int bestMove = _ai.findBestMove(_game);

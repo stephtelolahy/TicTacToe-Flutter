@@ -24,7 +24,7 @@ class MainView extends StatelessWidget {
       } else if (status is UserStatusWaiting) {
         return WaitingView();
       } else if (status is UserStatusPlaying) {
-        return GameView();
+        return GameView(status.gameId);
       } else {
         return Scaffold();
       }

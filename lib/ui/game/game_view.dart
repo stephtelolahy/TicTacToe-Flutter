@@ -6,12 +6,18 @@ import 'game_model.dart';
 import 'widget/field_widget.dart';
 
 class GameView extends StatelessWidget {
+  // Online Game identifier
+  // If null, then load local game VS AI
+  final String? gameId;
+
+  GameView(this.gameId);
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<GameModel>(
         create: (context) {
-          final model = GameModel();
-          model.update();
+          final model = GameModel(gameId);
+          model.initialize();
           return model;
         },
         child: Consumer<GameModel>(

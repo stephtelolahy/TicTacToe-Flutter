@@ -5,5 +5,5 @@ import 'ui/main/main_view.dart';
 
 Map<String, WidgetBuilder> routes() => <String, WidgetBuilder>{
       '/': (BuildContext context) => MainView(),
-      '/game': (BuildContext context) => GameView()
+      '/game': (BuildContext context) => GameView(null)
     };
