@@ -16,8 +16,8 @@ class GameView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<GameModel>(
         create: (context) {
-          final model = GameModel(gameId);
-          model.initialize();
+          final model = GameModel();
+          model.initialize(gameId);
           return model;
         },
         child: Consumer<GameModel>(
@@ -60,23 +60,20 @@ class GameView extends StatelessWidget {
   }
 
   Widget _header(GameModel model, BuildContext context) {
-    var title = "Game over!";
-    switch (model.status) {
-      case Game.P1:
-        title = "Congratulations!";
-        break;
-      case Game.P2:
-        title = "You lose :(";
-        break;
-
-      case Game.STATUS_DRAW:
-        title = "Draw!";
-        break;
-
-      default:
-        String symbol = model.turn;
-        title = "${model.isYourTurn ? "Your" : "CPU"} turn $symbol";
-        break;
+    var title = "";
+    if (model.status == Game.STATUS_NO_WINNERS_YET) {
+      String symbol = model.turn;
+      if (model.isYourTurn) {
+        title = "Your turn $symbol";
+      } else {
+        title = "Wait opponent's turn $symbol";
+      }
+    } else if (model.status == Game.STATUS_DRAW) {
+      title = "Draw!";
+    } else if (model.status == model.controlledPlayer) {
+      title = "You win, Congratulations!";
+    } else {
+      title = "You lose :(";
     }
 
     return Text(title, style: TextStyle(fontSize: 25));

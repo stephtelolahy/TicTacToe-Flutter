@@ -56,8 +56,8 @@ class DatabaseService {
     final board = List.generate(9, (idx) => Game.EMPTY_SPACE);
     final turn = Game.P1;
     final Map<String, String> users = {
-      Game.P1.toString(): userIds.first,
-      Game.P2.toString(): userIds.last
+      Game.P1: userIds.first,
+      Game.P2: userIds.last
     };
     final game = OnLineGame(board, turn, users);
     final gameRef = await _gamesRef.add(game.toJson());

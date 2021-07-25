@@ -11,8 +11,8 @@ class MiniMaxAi {
 
   /// Returns the best possible score for a certain board condition.
   /// This method implements the stopping condition.
-  int _getBestScore(Game game, int player) {
-    int status = game.status();
+  int _getBestScore(Game game, String player) {
+    String status = game.status();
 
     if (status == player) return WIN_SCORE;
 
@@ -24,7 +24,7 @@ class MiniMaxAi {
   }
 
   /// This is where the actual Minimax algorithm is implemented
-  Move _getBestMove(Game game, int player) {
+  Move _getBestMove(Game game, String player) {
     // try all possible moves
     List<int> newBoard;
     // will contain our next best score

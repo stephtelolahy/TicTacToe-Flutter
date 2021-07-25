@@ -8,34 +8,39 @@ import '../../data/services/database.dart';
 import '../../locator.dart';
 
 class GameModel extends ChangeNotifier {
-  static const _SYMBOLS = {Game.EMPTY_SPACE: "", Game.P1: "X", Game.P2: "O"};
-
   final _authService = locator<AuthService>();
   final _databaseService = locator<DatabaseService>();
 
-  final String? gameId;
-  late int _controlledPlayer;
-  late int? _aiPlayer;
+  late Game _game;
+  late String _controlledPlayer;
+  late String? _aiPlayer;
+  late MiniMaxAi _ai;
 
-  Game _game = Game.newGame();
-  MiniMaxAi _ai = MiniMaxAi();
+  initialize(String? gameId) {
+    if (gameId != null) {
+      // remote game
+      _controlledPlayer = _authService.userId();
+      throw("need to load remote game");
 
-  GameModel(this.gameId);
-
-  initialize() {
-    _controlledPlayer = Game.P1;
-    _aiPlayer = Game.P2;
-    _runAi();
-    // TODO: initialize things
+    } else {
+      // local game
+      _game = Game.newGame();
+      _controlledPlayer = Game.P1;
+      _aiPlayer = Game.P2;
+      _ai = MiniMaxAi();
+      _runAi();
+    }
   }
 
-  List<String> get board => _game.board.map((e) => _SYMBOLS[e]!).toList();
+  List<String> get board => _game.board;
 
-  String get turn => _SYMBOLS[_game.turn]!;
+  String get turn => _game.turn;
 
   bool get isYourTurn => _game.turn == _controlledPlayer;
 
-  int get status => _game.status();
+  String get status => _game.status();
+
+  String get controlledPlayer => _controlledPlayer;
 
   // actions
 

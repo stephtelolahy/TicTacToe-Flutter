@@ -1,26 +1,14 @@
 import 'dart:math';
 
 class Game {
-  static const int P1 = 1;
-  static const int P2 = -1;
-  static const int EMPTY_SPACE = 0;
+  static const String P1 = 'X';
+  static const String P2 = 'O';
+  static const String EMPTY_SPACE = '';
+  static const String STATUS_NO_WINNERS_YET = 'NO_WINNERS_YET';
+  static const String STATUS_DRAW = 'DRAW';
 
-  static const int STATUS_NO_WINNERS_YET = 0;
-  static const int STATUS_DRAW = 2;
-
-  static const _WIN_CONDITIONS = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-
-  List<int> board;
-  int turn;
+  List<String> board;
+  String turn;
 
   Game({required this.board, required this.turn});
 
@@ -41,11 +29,11 @@ class Game {
     turn = opponent(turn);
   }
 
-  static int opponent(int player) {
-    return -1 * player;
+  static String opponent(String player) {
+    return player == Game.P1 ? Game.P2 : Game.P1;
   }
 
-  int status() {
+  String status() {
     for (var row in _WIN_CONDITIONS) {
       if (board[row[0]] != EMPTY_SPACE &&
           board[row[0]] == board[row[1]] &&
@@ -60,6 +48,17 @@ class Game {
 
     return STATUS_NO_WINNERS_YET;
   }
+
+  static const _WIN_CONDITIONS = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
 
   List<int> possibleMoves() {
     List<int> result = [];
