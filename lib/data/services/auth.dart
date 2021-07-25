@@ -57,7 +57,7 @@ class AuthService {
         user.uid, user.displayName ?? user.uid, user.photoURL ?? '', 0);
   }
 
-  Future<void> signOut() async {
-    await _auth.signOut();
+  Future<void> signOut() {
+    return _auth.signOut();
   }
 }
