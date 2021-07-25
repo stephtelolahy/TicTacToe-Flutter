@@ -18,7 +18,7 @@ abstract class UserStatus {
     }
 
     final gameId = json?['gameId'] as String?;
-    final player = json?['player'] as int?;
+    final player = json?['player'] as String?;
     if (gameId != null && player != null) {
       return UserStatusPlaying(gameId, player);
     }
@@ -33,7 +33,7 @@ class UserStatusWaiting extends UserStatus {}
 
 class UserStatusPlaying extends UserStatus {
   final String gameId;
-  final int player;
+  final String player;
 
   UserStatusPlaying(this.gameId, this.player);
 }

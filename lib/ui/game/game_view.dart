@@ -20,10 +20,8 @@ class GameView extends StatelessWidget {
                   title: Text("Tic Tac Toe Flutter"),
                   actions: [
                     IconButton(
-                        onPressed: () =>
-                            Provider.of<GameModel>(context, listen: false)
-                                .restart(),
-                        icon: Icon(Icons.refresh))
+                        onPressed: () => model.exit(),
+                        icon: Icon(Icons.close_outlined))
                   ],
                 ),
                 body: Container(
@@ -58,10 +56,10 @@ class GameView extends StatelessWidget {
   Widget _header(GameModel model, BuildContext context) {
     var title = "Game over!";
     switch (model.status) {
-      case Game.HUMAN:
+      case Game.P1:
         title = "Congratulations!";
         break;
-      case Game.AI_PLAYER:
+      case Game.P2:
         title = "You lose :(";
         break;
 

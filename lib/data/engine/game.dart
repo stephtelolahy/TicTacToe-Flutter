@@ -1,8 +1,8 @@
 import 'dart:math';
 
 class Game {
-  static const int HUMAN = 1;
-  static const int AI_PLAYER = -1;
+  static const int P1 = 1;
+  static const int P2 = -1;
   static const int EMPTY_SPACE = 0;
 
   static const int STATUS_NO_WINNERS_YET = 0;
@@ -27,7 +27,7 @@ class Game {
   static Game newGame() {
     final board = List.generate(9, (idx) => EMPTY_SPACE);
     Random random = new Random();
-    final turn = random.nextBool() ? Game.HUMAN : Game.AI_PLAYER;
+    final turn = random.nextBool() ? Game.P1 : Game.P2;
     return Game(board: board, turn: turn);
   }
 
