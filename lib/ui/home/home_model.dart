@@ -16,7 +16,8 @@ class HomeModel extends ChangeNotifier {
   }
 
   Future<void> playOnline() async {
-    await _databaseService.setStatus(_authService.userId(), UserStatusWaiting());
+    await _databaseService.setStatus(
+        _authService.userId(), UserStatusWaiting());
     await _databaseService.match();
   }
 }

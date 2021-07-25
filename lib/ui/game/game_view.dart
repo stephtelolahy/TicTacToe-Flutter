@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/models/game.dart';
 import 'game_model.dart';
+import 'game_model_local.dart';
+import 'game_model_remote.dart';
 import 'widget/field_widget.dart';
 
 class GameView extends StatelessWidget {
@@ -16,8 +17,14 @@ class GameView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<GameModel>(
         create: (context) {
-          final model = GameModel();
-          model.initialize(gameId);
+          GameModel model;
+          final gameId = this.gameId;
+          if (gameId != null) {
+            model = GameModelRemote(gameId);
+          } else {
+            model = GameModelLocal();
+          }
+          model.load();
           return model;
         },
         child: Consumer<GameModel>(
@@ -65,22 +72,28 @@ class GameView extends StatelessWidget {
   }
 
   Widget _header(GameModel model, BuildContext context) {
-    var title = "";
-    if (model.status == Game.STATUS_NO_WINNERS_YET) {
-      String symbol = model.turn;
-      if (model.isYourTurn) {
-        title = "Your turn $symbol";
-      } else {
-        title = "Wait opponent's turn $symbol";
-      }
-    } else if (model.status == Game.STATUS_DRAW) {
-      title = "Draw!";
-    } else if (model.status == model.controlledPlayer) {
-      title = "You win, Congratulations!";
-    } else {
-      title = "You lose :(";
-    }
+    String title;
 
+    switch (model.outcome) {
+      case Outcome.win:
+        title = "You win, Congratulations!";
+        break;
+
+      case Outcome.draw:
+        title = "Draw!";
+        break;
+
+      case Outcome.loose:
+        title = "You lose :(";
+        break;
+
+      default:
+        if (model.yourTurn) {
+          title = "Your turn";
+        } else {
+          title = "Wait opponent's turn";
+        }
+    }
     return Text(title, style: TextStyle(fontSize: 25));
   }
 

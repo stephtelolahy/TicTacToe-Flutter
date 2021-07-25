@@ -5,7 +5,6 @@ import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'login_model.dart';
 
 class LoginView extends StatelessWidget {
-
   final model = LoginModel();
 
   @override

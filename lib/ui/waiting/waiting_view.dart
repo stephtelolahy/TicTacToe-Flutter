@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'waiting_model.dart';
 
 class WaitingView extends StatelessWidget {
-
   final model = WaitingModel();
 
   @override
@@ -14,8 +13,7 @@ class WaitingView extends StatelessWidget {
           title: Text("Tic Tac Toe Flutter"),
           actions: [
             IconButton(
-                icon: Icon(Icons.close_outlined),
-                onPressed: () => model.exit())
+                icon: Icon(Icons.close_outlined), onPressed: () => model.exit())
           ],
         ),
         body: Center(
