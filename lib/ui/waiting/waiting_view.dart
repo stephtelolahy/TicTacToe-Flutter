@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'waiting_model.dart';
 
 class WaitingView extends StatelessWidget {
+
+  final model = WaitingModel();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,7 +15,7 @@ class WaitingView extends StatelessWidget {
           actions: [
             IconButton(
                 icon: Icon(Icons.close_outlined),
-                onPressed: () => WaitingModel().exit())
+                onPressed: () => model.exit())
           ],
         ),
         body: Center(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/engine/game.dart';
+import '../../data/models/game.dart';
 import 'game_model.dart';
 import 'widget/field_widget.dart';
 
@@ -30,33 +30,38 @@ class GameView extends StatelessWidget {
                         icon: Icon(Icons.close_outlined))
                   ],
                 ),
-                body: Container(
-                  constraints: BoxConstraints.expand(),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(48),
-                        child: _header(model, context),
-                      ),
-                      Container(
-                        height: 400,
-                        width: 400,
-                        child: GridView.count(
-                          crossAxisCount: 3,
-                          // generate the widgets that will display the board
-                          children: List.generate(9, (idx) {
-                            return FieldWidget(
-                              idx: idx,
-                              onTap: (idx) => model.tap(idx),
-                              playerSymbol: model.board[idx],
-                            );
-                          }),
-                        ),
-                      ),
-                    ],
-                  ),
-                ))));
+                body: model.loading
+                    ? _loader(context)
+                    : _board(model, context))));
+  }
+
+  Widget _board(GameModel model, BuildContext context) {
+    return Container(
+        constraints: BoxConstraints.expand(),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(48),
+              child: _header(model, context),
+            ),
+            Container(
+              height: 400,
+              width: 400,
+              child: GridView.count(
+                crossAxisCount: 3,
+                // generate the widgets that will display the board
+                children: List.generate(9, (idx) {
+                  return FieldWidget(
+                    idx: idx,
+                    onTap: (idx) => model.tap(idx),
+                    playerSymbol: model.board[idx],
+                  );
+                }),
+              ),
+            ),
+          ],
+        ));
   }
 
   Widget _header(GameModel model, BuildContext context) {
@@ -77,5 +82,20 @@ class GameView extends StatelessWidget {
     }
 
     return Text(title, style: TextStyle(fontSize: 25));
+  }
+
+  Widget _loader(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(
+            height: 40,
+          ),
+          Text("Loading game...", style: TextStyle(fontSize: 17)),
+        ],
+      ),
+    );
   }
 }

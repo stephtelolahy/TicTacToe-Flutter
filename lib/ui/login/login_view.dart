@@ -5,6 +5,9 @@ import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'login_model.dart';
 
 class LoginView extends StatelessWidget {
+
+  final model = LoginModel();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +34,7 @@ class LoginView extends StatelessWidget {
                   // SignIn button
                   SignInButton(
                     Buttons.Google,
-                    onPressed: () => LoginModel().signInWithGoogle(),
+                    onPressed: () => model.signInWithGoogle(),
                   ),
                 ])));
   }

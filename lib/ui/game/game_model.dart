@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../data/engine/game.dart';
-import '../../data/engine/minimax_ai.dart';
+import '../../data/models/game.dart';
+import '../../data/services/minimax_ai.dart';
 import '../../data/models/user_status.dart';
 import '../../data/services/auth.dart';
 import '../../data/services/database.dart';
@@ -11,6 +11,7 @@ class GameModel extends ChangeNotifier {
   final _authService = locator<AuthService>();
   final _databaseService = locator<DatabaseService>();
 
+  bool _loading = true;
   late Game _game;
   late String _controlledPlayer;
   late String? _aiPlayer;
@@ -20,8 +21,8 @@ class GameModel extends ChangeNotifier {
     if (gameId != null) {
       // remote game
       _controlledPlayer = _authService.userId();
-      throw("need to load remote game");
-
+      // TODO: observe game
+      // TODO: load users
     } else {
       // local game
       _game = Game.newGame();
@@ -29,8 +30,11 @@ class GameModel extends ChangeNotifier {
       _aiPlayer = Game.P2;
       _ai = MiniMaxAi();
       _runAi();
+      _loading = false;
     }
   }
+
+  bool get loading => _loading;
 
   List<String> get board => _game.board;
 

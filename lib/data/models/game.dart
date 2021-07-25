@@ -12,6 +12,14 @@ class Game {
 
   Game({required this.board, required this.turn});
 
+  Game.fromJson(Map<String, Object?> json)
+      : board = json['board'] as List<String>,
+        turn = json['turn'] as String;
+
+  Map<String, Object> toJson() {
+    return {'board': board, 'turn': turn};
+  }
+
   static Game newGame() {
     final board = List.generate(9, (idx) => EMPTY_SPACE);
     Random random = new Random();

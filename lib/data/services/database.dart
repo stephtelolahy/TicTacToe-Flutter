@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../engine/game.dart';
-import '../models/online_game.dart';
+import '../models/game.dart';
 import '../models/user.dart';
 import '../models/user_status.dart';
 
@@ -53,15 +52,16 @@ class DatabaseService {
   }
 
   _createGame(Iterable<String> userIds) async {
-    final board = List.generate(9, (idx) => Game.EMPTY_SPACE);
-    final turn = Game.P1;
+    final game = Game.newGame();
+    final gameRef = await _gamesRef.add(game.toJson());
+    final gameId = gameRef.id;
+
     final Map<String, String> users = {
       Game.P1: userIds.first,
       Game.P2: userIds.last
     };
-    final game = OnLineGame(board, turn, users);
-    final gameRef = await _gamesRef.add(game.toJson());
-    final gameId = gameRef.id;
+
+    await _gamesRef.doc(gameId).update({'users': users});
 
     users.forEach((playerId, userId) {
       setStatus(userId, UserStatusPlaying(gameId, playerId));
