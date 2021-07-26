@@ -75,6 +75,7 @@ class DatabaseService {
     final snapshot = await _gamesRef.doc(id).get();
     final users = snapshot.get('users') as Map<String, dynamic>;
     print("users: $users");
+    // TODO: get user details
     Map<String, User> result = Map();
     return result;
   }
@@ -83,4 +84,8 @@ class DatabaseService {
     final snapshot = await
   }
  */
+
+Future<void> updateGame(String id, Game game) {
+  return _gamesRef.doc(id).set(game.toJson());
+}
 }

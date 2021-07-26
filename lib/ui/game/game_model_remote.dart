@@ -45,8 +45,7 @@ class GameModelRemote extends GameModel {
         _game.status() == Game.STATUS_NO_WINNERS_YET &&
         _game.possibleMoves().contains(position)) {
       _game.performMove(position);
-      // TODO: update game
-      notifyListeners();
+      _databaseService.updateGame(gameId, _game);
     }
   }
 

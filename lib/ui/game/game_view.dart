@@ -78,7 +78,7 @@ class GameView extends StatelessWidget {
 
     switch (model.outcome) {
       case Outcome.win:
-        title = "You win, Congratulations!";
+        title = "You win 🎉";
         break;
 
       case Outcome.draw:
