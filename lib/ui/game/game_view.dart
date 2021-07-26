@@ -10,8 +10,9 @@ class GameView extends StatelessWidget {
   // Online Game identifier
   // If null, then load local game VS AI
   final String? gameId;
+  final String? controlledPlayer;
 
-  GameView(this.gameId);
+  GameView(this.gameId, this.controlledPlayer);
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +20,9 @@ class GameView extends StatelessWidget {
         create: (context) {
           GameModel model;
           final gameId = this.gameId;
-          if (gameId != null) {
-            model = GameModelRemote(gameId);
+          final controlledPlayer = this.controlledPlayer;
+          if (gameId != null && controlledPlayer != null) {
+            model = GameModelRemote(gameId, controlledPlayer);
           } else {
             model = GameModelLocal();
           }

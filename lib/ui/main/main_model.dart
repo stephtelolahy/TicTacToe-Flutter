@@ -22,7 +22,7 @@ class MainModel extends ChangeNotifier {
         return;
       }
 
-      _databaseService.observeUserStatus(userId, (status) {
+      _databaseService.userStatusStream(userId).listen((status) {
         _status = status;
         notifyListeners();
       });

@@ -18,7 +18,7 @@ class AuthService {
   }
 
   String userId() {
-    return _auth.currentUser?.uid ?? '';
+    return _auth.currentUser!.uid;
   }
 
   Future<model.User> signInWithGoogle() async {

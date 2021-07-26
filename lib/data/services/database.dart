@@ -22,16 +22,16 @@ class DatabaseService {
   Future<void> setStatus(String id, UserStatus status) {
     final value = status.toJson();
     if (value != null) {
-      return _statusRef.doc(id).set(status.toJson());
+      return _statusRef.doc(id).set(value);
     } else {
       return _statusRef.doc(id).delete();
     }
   }
 
-  observeUserStatus(String id, void onChange(UserStatus status)) {
-    _statusRef.doc(id).snapshots().listen((event) {
+  Stream<UserStatus> userStatusStream(String id) {
+    return _statusRef.doc(id).snapshots().map((event) {
       final value = event.data() as Map<String, Object?>?;
-      onChange(UserStatus.fromJson(value));
+      return UserStatus.fromJson(value);
     });
   }
 
@@ -39,16 +39,12 @@ class DatabaseService {
     // if two waiting users,
     // then create a new game
     // and update their statuses
-    _statusRef
-        .where('waiting', isEqualTo: true)
-        .limit(2)
-        .get()
-        .then((snapshot) async {
-      if (snapshot.size == 2) {
-        final userIds = snapshot.docs.map((e) => e.id);
-        await _createGame(userIds);
-      }
-    });
+    final snapshot =
+        await _statusRef.where('waiting', isEqualTo: true).limit(2).get();
+    if (snapshot.size == 2) {
+      final userIds = snapshot.docs.map((e) => e.id);
+      await _createGame(userIds);
+    }
   }
 
   _createGame(Iterable<String> userIds) async {
@@ -67,4 +63,24 @@ class DatabaseService {
       setStatus(userId, UserStatusPlaying(gameId, playerId));
     });
   }
+
+  Stream<Game> gameStream(String id) {
+    return _gamesRef.doc(id).snapshots().map((snapshot) {
+      final data = snapshot.data() as Map<String, Object?>;
+      return Game.fromJson(data);
+    });
+  }
+
+  Future<Map<String, User>> getGameUsers(String id) async {
+    final snapshot = await _gamesRef.doc(id).get();
+    final users = snapshot.get('users') as Map<String, dynamic>;
+    print("users: $users");
+    Map<String, User> result = Map();
+    return result;
+  }
+/*
+  Future<User> _getUser(String id) async {
+    final snapshot = await
+  }
+ */
 }

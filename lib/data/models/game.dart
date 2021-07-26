@@ -13,7 +13,7 @@ class Game {
   Game({required this.board, required this.turn});
 
   Game.fromJson(Map<String, Object?> json)
-      : board = json['board'] as List<String>,
+      : board = (json['board'] as List<dynamic>).cast<String>(),
         turn = json['turn'] as String;
 
   Map<String, Object> toJson() {
