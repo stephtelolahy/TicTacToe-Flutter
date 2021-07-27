@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'game_model.dart';
-import 'game_model_local.dart';
-import 'game_model_remote.dart';
 import 'widget/field_widget.dart';
 
 class GameView extends StatelessWidget {
@@ -18,15 +16,12 @@ class GameView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<GameModel>(
         create: (context) {
-          GameModel model;
-          final gameId = this.gameId;
-          final controlledPlayer = this.controlledPlayer;
+          final model = GameModel();
           if (gameId != null && controlledPlayer != null) {
-            model = GameModelRemote(gameId, controlledPlayer);
+            model.initializeRemoteGame(gameId!, controlledPlayer!);
           } else {
-            model = GameModelLocal();
+            model.initializeLocalGame();
           }
-          model.load();
           return model;
         },
         child: Consumer<GameModel>(
@@ -39,12 +34,12 @@ class GameView extends StatelessWidget {
                         icon: Icon(Icons.close_outlined))
                   ],
                 ),
-                body: model.loading
-                    ? _loader(context)
-                    : _board(model, context))));
+                body: model.board != null
+                    ? _boardWidget(model, context)
+                    : _loaderWidget(context))));
   }
 
-  Widget _board(GameModel model, BuildContext context) {
+  Widget _boardWidget(GameModel model, BuildContext context) {
     return Container(
         constraints: BoxConstraints.expand(),
         child: Column(
@@ -52,19 +47,19 @@ class GameView extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(48),
-              child: _header(model, context),
+              child: Text(_displayText(model.message),
+                  style: TextStyle(fontSize: 25)),
             ),
             Container(
               height: 400,
               width: 400,
               child: GridView.count(
                 crossAxisCount: 3,
-                // generate the widgets that will display the board
                 children: List.generate(9, (idx) {
                   return FieldWidget(
                     idx: idx,
                     onTap: (idx) => model.tap(idx),
-                    playerSymbol: model.board[idx],
+                    playerSymbol: model.board![idx],
                   );
                 }),
               ),
@@ -73,33 +68,24 @@ class GameView extends StatelessWidget {
         ));
   }
 
-  Widget _header(GameModel model, BuildContext context) {
-    String title;
-
-    switch (model.outcome) {
-      case Outcome.win:
-        title = "You win 🎉";
-        break;
-
-      case Outcome.draw:
-        title = "Draw!";
-        break;
-
-      case Outcome.loose:
-        title = "You lose :(";
-        break;
-
+  String _displayText(Message? message) {
+    switch (message) {
+      case Message.yourTurn:
+        return "Your turn";
+      case Message.opponentTurn:
+        return "Wait opponent's turn";
+      case Message.win:
+        return "You win 🎉";
+      case Message.draw:
+        return "Draw!";
+      case Message.loose:
+        return "You lose :(";
       default:
-        if (model.yourTurn) {
-          title = "Your turn";
-        } else {
-          title = "Wait opponent's turn";
-        }
+        return "";
     }
-    return Text(title, style: TextStyle(fontSize: 25));
   }
 
-  Widget _loader(BuildContext context) {
+  Widget _loaderWidget(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

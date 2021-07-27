@@ -79,13 +79,8 @@ class DatabaseService {
     Map<String, User> result = Map();
     return result;
   }
-/*
-  Future<User> _getUser(String id) async {
-    final snapshot = await
-  }
- */
 
-Future<void> updateGame(String id, Game game) {
-  return _gamesRef.doc(id).set(game.toJson());
-}
+  Future<void> updateGame(String id, Game game) {
+    return _gamesRef.doc(id).set(game.toJson());
+  }
 }
