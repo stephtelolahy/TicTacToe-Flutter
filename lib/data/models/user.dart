@@ -10,7 +10,7 @@ class User {
       : id = json['id'] as String,
         name = json['name'] as String,
         photoURL = json['photoURL'] as String,
-        score = json['score'] as int;
+        score = (json['score'] as int?) ?? 0;
 
   Map<String, Object> toJson() {
     return {'id': id, 'name': name, 'photoURL': photoURL};

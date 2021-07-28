@@ -74,10 +74,19 @@ class DatabaseService {
   Future<Map<String, User>> getGameUsers(String id) async {
     final snapshot = await _gamesRef.doc(id).get();
     final users = snapshot.get('users') as Map<String, dynamic>;
-    print("users: $users");
-    // TODO: get user details
     Map<String, User> result = Map();
+    for (var key in users.keys) {
+      final userId = users[key] as String;
+      result[key] = await _getUser(userId);
+    }
+    print('getGameUsers $result');
     return result;
+  }
+
+  Future<User> _getUser(String id) async {
+    final snapshot = await _usersRef.doc(id).get();
+    final data = snapshot.data() as Map<String, Object?>;
+    return User.fromJson(data);
   }
 
   Future<void> updateGame(String id, Game game) {

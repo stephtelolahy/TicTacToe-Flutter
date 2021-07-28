@@ -28,6 +28,8 @@ class GameModel extends ChangeNotifier {
 
   Message? get message => _message;
 
+  Map<String, User> get users => _users;
+
   initializeLocalGame() {
     final game = Game.newGame();
     _engine = GameEngineLocal(game: game);
@@ -38,17 +40,17 @@ class GameModel extends ChangeNotifier {
     _aiPlayer = Game.P2;
     _ai = MiniMaxAi();
 
+    _users = {
+      Game.P1: User('', 'You', '', 0),
+      Game.P2: User('', 'CPU', '', 0)
+    };
+
     _engine.gameStream.listen((game) {
       _game = game;
       _message = _buildMessage(game);
       notifyListeners();
       _runAi();
     });
-
-    _users = {
-      Game.P1: User('0', 'You', '', 0),
-      Game.P2: User('1', 'CPU', '', 0)
-    };
   }
 
   initializeRemoteGame(String gameId, String controlledPlayer) {
