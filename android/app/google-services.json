@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "361920258174-1eaird11je0vsdt66oc03cns18bbfr42.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.creativegames.tictactoe",
+            "certificate_hash": "395ba792da99f06fa1ca41cfd3baaba16a58fbbe"
+          }
+        },
+        {
           "client_id": "361920258174-bfm8a0jequnriact5ocauildd97thses.apps.googleusercontent.com",
           "client_type": 3
         }

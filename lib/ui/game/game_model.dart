@@ -1,55 +1,109 @@
 import 'package:flutter/material.dart';
 
-import '../../core/game.dart';
-import '../../core/minimax_ai.dart';
+import '../../data/engine/game_engine.dart';
+import '../../data/engine/minimax_ai.dart';
+import '../../data/models/game.dart';
+import '../../data/models/user.dart';
+import '../../data/models/user_status.dart';
+import '../../data/services/auth.dart';
+import '../../data/services/database.dart';
+import '../../locator.dart';
+
+enum Message { yourTurn, opponentTurn, win, loose, draw }
 
 class GameModel extends ChangeNotifier {
-  static const SYMBOLS = {
-    Game.EMPTY_SPACE: "",
-    Game.HUMAN: "X",
-    Game.AI_PLAYER: "O"
-  };
+  final _authService = locator<AuthService>();
+  final _databaseService = locator<DatabaseService>();
 
-  Game _game = Game.newGame();
+  late GameEngine _engine;
+  late String _controlledPlayer;
+  late MiniMaxAi _ai;
+  late String _aiPlayer;
 
-  MiniMaxAi _ai = MiniMaxAi();
+  Game? _game;
+  Message? _message;
+  Map<String, User> _users = Map();
 
-  // states
+  List<String>? get board => _game?.board;
 
-  List<String> get board => _game.board.map((e) => SYMBOLS[e]!).toList();
+  Message? get message => _message;
 
-  String get turn => SYMBOLS[_game.turn]!;
+  initializeLocalGame() {
+    final game = Game.newGame();
+    _engine = GameEngineLocal(game: game);
+    _engine.initialize();
 
-  bool get isYourTurn => _game.turn == Game.HUMAN;
+    _controlledPlayer = Game.P1;
 
-  int get status => _game.status();
+    _aiPlayer = Game.P2;
+    _ai = MiniMaxAi();
 
-  // actions
+    _engine.gameStream.listen((game) {
+      _game = game;
+      _message = _buildMessage(game);
+      notifyListeners();
+      _runAi();
+    });
 
-  void update() {
-    if (_game.turn == Game.AI_PLAYER &&
-        _game.status() == Game.STATUS_NO_WINNERS_YET) {
+    _users = {
+      Game.P1: User('0', 'You', '', 0),
+      Game.P2: User('1', 'CPU', '', 0)
+    };
+  }
+
+  initializeRemoteGame(String gameId, String controlledPlayer) {
+    _engine = GameEngineRemote(gameId: gameId);
+    _engine.initialize();
+    _controlledPlayer = controlledPlayer;
+
+    _engine.gameStream.listen((game) {
+      _game = game;
+      _message = _buildMessage(game);
+      notifyListeners();
+    });
+
+    _databaseService.getGameUsers(gameId).then((users) {
+      _users = users;
+      notifyListeners();
+    });
+  }
+
+  Message? _buildMessage(Game game) {
+    final status = game.status();
+    if (status == Game.STATUS_NO_WINNERS_YET) {
+      if (game.turn == _controlledPlayer) {
+        return Message.yourTurn;
+      } else {
+        return Message.opponentTurn;
+      }
+    } else if (status == Game.STATUS_DRAW) {
+      return Message.draw;
+    } else if (status == _controlledPlayer) {
+      return Message.win;
+    } else {
+      return Message.loose;
+    }
+  }
+
+  tap(int position) {
+    final game = _game!;
+    if (game.turn == _controlledPlayer &&
+        game.status() == Game.STATUS_NO_WINNERS_YET) {
+      _engine.move(position);
+    }
+  }
+
+  _runAi() {
+    final game = _game!;
+    if (game.turn == _aiPlayer && game.status() == Game.STATUS_NO_WINNERS_YET) {
+      int bestMove = _ai.findBestMove(game);
       Future.delayed(const Duration(milliseconds: 1000), () {
-        int bestMove = _ai.findBestMove(_game);
-        _game.performMove(bestMove);
-        notifyListeners();
+        _engine.move(bestMove);
       });
     }
   }
 
-  void tap(int position) {
-    if (_game.turn == Game.HUMAN &&
-        _game.status() == Game.STATUS_NO_WINNERS_YET &&
-        _game.possibleMoves().contains(position)) {
-      _game.performMove(position);
-      notifyListeners();
-      update();
-    }
-  }
-
-  void restart() {
-    _game = Game.newGame();
-    notifyListeners();
-    update();
+  exit() {
+    _databaseService.setStatus(_authService.userId(), UserStatusIdle());
   }
 }

@@ -1,37 +1,17 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+
+import '../../data/services/auth.dart';
+import '../../data/services/database.dart';
+import '../../locator.dart';
 
 class LoginModel extends ChangeNotifier {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  // actions
+  final _authService = locator<AuthService>();
+  final _databaseService = locator<DatabaseService>();
 
   Future<void> signInWithGoogle() async {
     try {
-      UserCredential userCredential;
-
-      if (kIsWeb) {
-        var googleProvider = GoogleAuthProvider();
-        userCredential = await _auth.signInWithPopup(googleProvider);
-      } else {
-        final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-        if (googleUser == null) {
-          return;
-        }
-
-        final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
-        final googleAuthCredential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
-        userCredential = await _auth.signInWithCredential(googleAuthCredential);
-      }
-
-      final user = userCredential.user;
-      print('Sign In ${user!.uid} with Google');
+      final user = await _authService.signInWithGoogle();
+      await _databaseService.createUser(user);
     } catch (e) {
       print(e);
     }

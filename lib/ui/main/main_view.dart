@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tictactoe/ui/home/home_view.dart';
-import 'package:tictactoe/ui/login/login_view.dart';
-import 'package:tictactoe/ui/main/main_model.dart';
+
+import '../../data/models/user_status.dart';
+import '../game/game_view.dart';
+import '../home/home_view.dart';
+import '../login/login_view.dart';
+import '../waiting/waiting_view.dart';
+import 'main_model.dart';
 
 class MainView extends StatelessWidget {
   @override
@@ -12,17 +16,17 @@ class MainView extends StatelessWidget {
       model.initialize();
       return model;
     }, child: Consumer<MainModel>(builder: (context, model, child) {
-      switch (model.userState) {
-        case UserState.unknown:
-          return Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-
-        case UserState.signedIn:
-          return HomeView();
-
-        case UserState.signedOut:
-          return LoginView();
+      final status = model.status;
+      if (status == null) {
+        return LoginView();
+      } else if (status is UserStatusIdle) {
+        return HomeView();
+      } else if (status is UserStatusWaiting) {
+        return WaitingView();
+      } else if (status is UserStatusPlaying) {
+        return GameView(status.gameId, status.player);
+      } else {
+        return Scaffold();
       }
     }));
   }

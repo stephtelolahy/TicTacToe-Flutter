@@ -20,18 +20,21 @@ class HomeView extends StatelessWidget {
                         onPressed: () => model.logout())
                   ],
                 ),
-                body: Container(
-                  constraints: BoxConstraints.expand(),
+                body: Center(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // Welcome text
                       Text(
-                        "Welcome to Flutter Tic Tac Toe!",
+                        "Welcome ${model.userName}!",
                         style: TextStyle(fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(
+                        height: 40,
                       ),
                       // New game button
+
                       ElevatedButton(
                         style: ButtonStyle(
                             padding: MaterialStateProperty.all(
@@ -41,15 +44,28 @@ class HomeView extends StatelessWidget {
                               borderRadius: BorderRadius.circular(60.0),
                             ))),
                         child: Text(
-                          "New game!",
+                          "PLAY",
                           style: TextStyle(fontSize: 20),
+                        ),
+                        onPressed: () => model.playOnline(),
+                      ),
+                      SizedBox(
+                        height: 40,
+                      ),
+                      TextButton(
+                        child: Text(
+                          "TRAINING",
                         ),
                         onPressed: () {
                           Navigator.pushNamed(context, '/game');
                         },
                       ),
-                      // Win statistic widget
-                      Text("No wins yet!", style: TextStyle(fontSize: 15)),
+                      TextButton(
+                        child: Text(
+                          "LEADERBOARD",
+                        ),
+                        onPressed: null,
+                      ),
                     ],
                   ),
                 ))));

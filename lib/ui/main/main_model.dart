@@ -1,24 +1,31 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
-enum UserState { unknown, signedIn, signedOut }
+import '../../data/models/user_status.dart';
+import '../../data/services/auth.dart';
+import '../../data/services/database.dart';
+import '../../locator.dart';
 
 class MainModel extends ChangeNotifier {
-  UserState _userState = UserState.unknown;
+  final _authService = locator<AuthService>();
+  final _databaseService = locator<DatabaseService>();
 
-  // states
+  UserStatus? _status;
 
-  UserState get userState => _userState;
+  UserStatus? get status => _status;
 
-  // actions
+  initialize() async {
+    _authService.observeAuthState((userId) {
+      if (userId == null) {
+        _status = null;
+        notifyListeners();
+        return;
+      }
 
-  void initialize() async {
-    await Firebase.initializeApp();
-
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      _userState = user != null ? UserState.signedIn : UserState.signedOut;
-      notifyListeners();
+      _databaseService.userStatusStream(userId).listen((status) {
+        _status = status;
+        notifyListeners();
+      });
     });
   }
 }
