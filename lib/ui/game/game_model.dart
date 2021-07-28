@@ -1,56 +1,120 @@
 import 'package:flutter/material.dart';
 
-import '../../model/game.dart';
-import '../../model/minimax_ai.dart';
+import '../../data/engine/game_engine.dart';
+import '../../data/engine/minimax_ai.dart';
+import '../../data/models/game.dart';
+import '../../data/models/user.dart';
+import '../../data/models/user_status.dart';
+import '../../data/services/auth.dart';
+import '../../data/services/database.dart';
+import '../../locator.dart';
+
+enum Message { yourTurn, opponentTurn, win, loose, draw }
 
 class GameModel extends ChangeNotifier {
-  Game _game = Game(
-      board: List.generate(9, (idx) => Game.EMPTY_SPACE), turn: Game.HUMAN);
+  final _authService = locator<AuthService>();
+  final _databaseService = locator<DatabaseService>();
 
-  //RandomAi _ai = RandomAi();
-  MiniMaxAi _ai = MiniMaxAi();
+  late GameEngine _engine;
+  late String _controlledPlayer;
+  late String _opponentPlayer;
 
-  List<int> get board => _game.board;
+  MiniMaxAi? _ai;
 
-  int get turn => _game.turn;
+  Game? _game;
+  Message? _message;
+  Map<String, User> _users = Map();
 
-  bool get isYourTurn => _game.turn == Game.HUMAN;
+  List<String>? get board => _game?.board;
 
-  int get status => _game.status();
+  Message? get message => _message;
 
-  void tap(int position) {
-    if (_game.status() != Game.STATUS_NO_WINNERS_YET) {
-      return;
+  Map<String, User> get users => _users;
+
+  String get controlledPlayer => _controlledPlayer;
+
+  String get opponentPlayer => _opponentPlayer;
+
+  initializeLocalGame(String player) {
+    final game = Game.newGame();
+    _engine = GameEngineLocal(game: game);
+    _engine.initialize();
+
+    _controlledPlayer = player;
+    _opponentPlayer = Game.opponent(player);
+
+    _ai = MiniMaxAi();
+
+    _users = {Game.P1: User('', _authService.userName(), _authService.photoURL(), 0), Game.P2: User('', 'CPU', '', 0)};
+
+    _engine.gameStream.listen((game) {
+      _game = game;
+      _message = _buildMessage(game);
+      notifyListeners();
+      _runAi();
+    });
+  }
+
+  initializeRemoteGame(String gameId, String player) {
+    _engine = GameEngineRemote(gameId: gameId);
+    _engine.initialize();
+    _controlledPlayer = player;
+    _opponentPlayer = Game.opponent(player);
+
+    _engine.gameStream.listen((game) {
+      _game = game;
+      _message = _buildMessage(game);
+      _updateScoreIfGameOver(game);
+      notifyListeners();
+    });
+
+    _databaseService.getGameUsers(gameId).then((users) {
+      _users = users;
+      notifyListeners();
+    });
+  }
+
+  Message? _buildMessage(Game game) {
+    final status = game.status();
+    if (status == Game.STATUS_NO_WINNERS_YET) {
+      if (game.turn == _controlledPlayer) {
+        return Message.yourTurn;
+      } else {
+        return Message.opponentTurn;
+      }
+    } else if (status == Game.STATUS_DRAW) {
+      return Message.draw;
+    } else if (status == _controlledPlayer) {
+      return Message.win;
+    } else {
+      return Message.loose;
     }
+  }
 
-    if (_game.turn != Game.HUMAN) {
-      return;
+  tap(int position) {
+    final game = _game!;
+    if (game.turn == _controlledPlayer && game.status() == Game.STATUS_NO_WINNERS_YET) {
+      _engine.move(position);
     }
+  }
 
-    if (!_game.possibleMoves().contains(position)) {
-      return;
-    }
-
-    _game.performMove(position);
-    notifyListeners();
-
-    if (_game.turn == Game.AI_PLAYER &&
-        _game.status() == Game.STATUS_NO_WINNERS_YET) {
+  _runAi() {
+    final game = _game!;
+    if (_ai != null && game.turn == _opponentPlayer && game.status() == Game.STATUS_NO_WINNERS_YET) {
+      int bestMove = _ai!.findBestMove(game);
       Future.delayed(const Duration(milliseconds: 1000), () {
-        _runAI();
+        _engine.move(bestMove);
       });
     }
   }
 
-  void restart() {
-    _game = Game(
-        board: List.generate(9, (idx) => Game.EMPTY_SPACE), turn: Game.HUMAN);
-    notifyListeners();
+  _updateScoreIfGameOver(Game game) {
+    if (game.status() == _controlledPlayer) {
+      _databaseService.incrementScore(_authService.userId());
+    }
   }
 
-  void _runAI() {
-    int bestMove = _ai.findBestMove(_game);
-    _game.performMove(bestMove);
-    notifyListeners();
+  exit() {
+    _databaseService.setStatus(_authService.userId(), UserStatusIdle());
   }
 }

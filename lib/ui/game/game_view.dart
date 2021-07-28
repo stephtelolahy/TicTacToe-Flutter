@@ -1,82 +1,118 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../model/game.dart';
+import '../../data/models/user.dart';
 import 'game_model.dart';
 import 'widget/field_widget.dart';
 
 class GameView extends StatelessWidget {
-  static const SYMBOLS = {
-    Game.EMPTY_SPACE: "",
-    Game.HUMAN: "X",
-    Game.AI_PLAYER: "O"
-  };
+  final String? gameId;
+  final String player;
+
+  GameView({this.gameId, required this.player});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<GameModel>(
-        create: (context) => GameModel(),
-        child: Consumer<GameModel>(
-            builder: (context, model, child) => Scaffold(
-                appBar: AppBar(
-                  title: Text("Tic Tac Toe Flutter"),
-                  actions: [
-                    IconButton(
-                        onPressed: () =>
-                            Provider.of<GameModel>(context, listen: false)
-                                .restart(),
-                        icon: Icon(Icons.refresh))
-                  ],
-                ),
-                body: Container(
-                  constraints: BoxConstraints.expand(),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(48),
-                        child: _header(model, context),
-                      ),
-                      Container(
-                        height: 400,
-                        width: 400,
-                        child: GridView.count(
-                          crossAxisCount: 3,
-                          // generate the widgets that will display the board
-                          children: List.generate(9, (idx) {
-                            return FieldWidget(
-                              idx: idx,
-                              onTap: (idx) => model.tap(idx),
-                              playerSymbol: SYMBOLS[model.board[idx]]!,
-                            );
-                          }),
-                        ),
-                      ),
-                    ],
+    return ChangeNotifierProvider<GameModel>(create: (context) {
+      final model = GameModel();
+      if (gameId != null) {
+        model.initializeRemoteGame(gameId!, player);
+      } else {
+        model.initializeLocalGame(player);
+      }
+      return model;
+    }, child: Consumer<GameModel>(builder: (context, model, child) {
+      return Scaffold(
+          appBar: AppBar(
+            title: Text("Tic Tac Toe Flutter"),
+            actions: [IconButton(onPressed: () => model.exit(), icon: Icon(Icons.close_outlined))],
+          ),
+          body: Container(
+              constraints: BoxConstraints.expand(),
+              child: Column(
+                children: [
+                  _usersWidget(context, model.opponentPlayer, model.users[model.opponentPlayer]),
+                  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Text(model.message?.displayText() ?? '', style: TextStyle(fontSize: 25)),
                   ),
-                ))));
+                  model.board != null ? _boardWidget(model, context) : _loaderWidget(context),
+                  _usersWidget(context, model.controlledPlayer, model.users[model.controlledPlayer]),
+                ],
+              )));
+    }));
   }
 
-  Widget _header(GameModel model, BuildContext context) {
-    var title = "Game over!";
-    switch (model.status) {
-      case Game.HUMAN:
-        title = "Congratulations!";
-        break;
-      case Game.AI_PLAYER:
-        title = "You lose :(";
-        break;
+  Widget _boardWidget(GameModel model, BuildContext context) {
+    return Container(
+      height: 400,
+      width: 400,
+      child: GridView.count(
+        crossAxisCount: 3,
+        children: List.generate(9, (idx) {
+          return FieldWidget(
+            idx: idx,
+            onTap: (idx) => model.tap(idx),
+            playerSymbol: model.board![idx],
+          );
+        }),
+      ),
+    );
+  }
 
-      case Game.STATUS_DRAW:
-        title = "Draw!";
-        break;
+  Widget _loaderWidget(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(
+            height: 40,
+          ),
+          Text("Loading game...", style: TextStyle(fontSize: 17)),
+        ],
+      ),
+    );
+  }
 
-      default:
-        String symbol = SYMBOLS[model.turn]!;
-        title = "${model.isYourTurn ? "Your" : "CPU"} turn $symbol";
-        break;
+  Widget _usersWidget(BuildContext context, String player, User? user) {
+    if (user == null) {
+      return Container();
     }
 
-    return Text(title, style: TextStyle(fontSize: 25));
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        ClipRRect(
+            borderRadius: BorderRadius.circular(18.0),
+            child: user.photoURL.isNotEmpty
+                ? Image.network(
+                    user.photoURL,
+                    height: 36.0,
+                    width: 36.0,
+                  )
+                : Icon(Icons.face)),
+        Text("$player ${user.name}", style: TextStyle(fontSize: 17)),
+      ],
+    );
+  }
+}
+
+extension Displaying on Message {
+  String displayText() {
+    switch (this) {
+      case Message.yourTurn:
+        return "Your turn";
+      case Message.opponentTurn:
+        return "Wait opponent's turn";
+      case Message.win:
+        return "You win 🎉";
+      case Message.draw:
+        return "Draw!";
+      case Message.loose:
+        return "You lose :(";
+      default:
+        return "";
+    }
   }
 }
