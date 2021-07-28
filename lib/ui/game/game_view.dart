@@ -8,18 +8,18 @@ import 'widget/field_widget.dart';
 
 class GameView extends StatelessWidget {
   final String? gameId;
-  final String? controlledPlayer;
+  final String player;
 
-  GameView(this.gameId, this.controlledPlayer);
+  GameView({this.gameId, required this.player});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<GameModel>(create: (context) {
       final model = GameModel();
-      if (gameId != null && controlledPlayer != null) {
-        model.initializeRemoteGame(gameId!, controlledPlayer!);
+      if (gameId != null) {
+        model.initializeRemoteGame(gameId!, player);
       } else {
-        model.initializeLocalGame();
+        model.initializeLocalGame(player);
       }
       return model;
     }, child: Consumer<GameModel>(builder: (context, model, child) {

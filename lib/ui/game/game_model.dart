@@ -30,20 +30,17 @@ class GameModel extends ChangeNotifier {
 
   Map<String, User> get users => _users;
 
-  initializeLocalGame() {
+  initializeLocalGame(String player) {
     final game = Game.newGame();
     _engine = GameEngineLocal(game: game);
     _engine.initialize();
 
-    _controlledPlayer = Game.P1;
+    _controlledPlayer = player;
 
-    _aiPlayer = Game.P2;
+    _aiPlayer = Game.opponent(player);
     _ai = MiniMaxAi();
 
-    _users = {
-      Game.P1: User('', 'You', '', 0),
-      Game.P2: User('', 'CPU', '', 0)
-    };
+    _users = {Game.P1: User('', 'You', '', 0), Game.P2: User('', 'CPU', '', 0)};
 
     _engine.gameStream.listen((game) {
       _game = game;
@@ -53,10 +50,10 @@ class GameModel extends ChangeNotifier {
     });
   }
 
-  initializeRemoteGame(String gameId, String controlledPlayer) {
+  initializeRemoteGame(String gameId, String player) {
     _engine = GameEngineRemote(gameId: gameId);
     _engine.initialize();
-    _controlledPlayer = controlledPlayer;
+    _controlledPlayer = player;
 
     _engine.gameStream.listen((game) {
       _game = game;

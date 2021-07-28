@@ -92,4 +92,18 @@ class DatabaseService {
   Future<void> updateGame(String id, Game game) {
     return _gamesRef.doc(id).set(game.toJson());
   }
+
+  Future<List<User>> getLeaderboard() async {
+    final snapshot = await _usersRef.get();
+    List<User> result = [];
+    for (var doc in snapshot.docs) {
+      final data = doc.data() as Map<String, Object?>;
+      final user = User.fromJson(data);
+      result.add(user);
+    }
+
+    result.sort((user1, user2) => user2.score - user1.score);
+
+    return result;
+  }
 }

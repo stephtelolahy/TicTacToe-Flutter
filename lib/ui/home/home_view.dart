@@ -64,7 +64,8 @@ class HomeView extends StatelessWidget {
                         child: Text(
                           "LEADERBOARD",
                         ),
-                        onPressed: null,
+                        onPressed: () =>
+                            Navigator.pushNamed(context, '/leaderboard'),
                       ),
                     ],
                   ),
