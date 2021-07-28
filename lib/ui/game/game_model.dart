@@ -58,6 +58,7 @@ class GameModel extends ChangeNotifier {
     _engine.gameStream.listen((game) {
       _game = game;
       _message = _buildMessage(game);
+      _updateScoreIfGameOver(game);
       notifyListeners();
     });
 
@@ -86,8 +87,7 @@ class GameModel extends ChangeNotifier {
 
   tap(int position) {
     final game = _game!;
-    if (game.turn == _controlledPlayer &&
-        game.status() == Game.STATUS_NO_WINNERS_YET) {
+    if (game.turn == _controlledPlayer && game.status() == Game.STATUS_NO_WINNERS_YET) {
       _engine.move(position);
     }
   }
@@ -99,6 +99,12 @@ class GameModel extends ChangeNotifier {
       Future.delayed(const Duration(milliseconds: 1000), () {
         _engine.move(bestMove);
       });
+    }
+  }
+
+  _updateScoreIfGameOver(Game game) {
+    if (game.status() == _controlledPlayer) {
+      _databaseService.incrementScore(_authService.userId());
     }
   }
 

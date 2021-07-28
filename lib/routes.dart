@@ -7,7 +7,6 @@ import 'ui/main/main_view.dart';
 
 Map<String, WidgetBuilder> routes() => <String, WidgetBuilder>{
       '/': (BuildContext context) => MainView(),
-      '/game': (BuildContext context) =>
-          GameView(gameId: null, player: Game.P1),
+      '/game': (BuildContext context) => GameView(gameId: null, player: Game.P1),
       '/leaderboard': (BuildContext context) => LeaderboardView(),
     };

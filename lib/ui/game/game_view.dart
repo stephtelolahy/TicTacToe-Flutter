@@ -26,11 +26,7 @@ class GameView extends StatelessWidget {
       return Scaffold(
           appBar: AppBar(
             title: Text("Tic Tac Toe Flutter"),
-            actions: [
-              IconButton(
-                  onPressed: () => model.exit(),
-                  icon: Icon(Icons.close_outlined))
-            ],
+            actions: [IconButton(onPressed: () => model.exit(), icon: Icon(Icons.close_outlined))],
           ),
           body: Container(
               constraints: BoxConstraints.expand(),
@@ -39,12 +35,9 @@ class GameView extends StatelessWidget {
                   _usersWidget(context, Game.P1, model.users[Game.P1]),
                   Padding(
                     padding: const EdgeInsets.all(24),
-                    child: Text(model.message?.displayText() ?? '',
-                        style: TextStyle(fontSize: 25)),
+                    child: Text(model.message?.displayText() ?? '', style: TextStyle(fontSize: 25)),
                   ),
-                  model.board != null
-                      ? _boardWidget(model, context)
-                      : _loaderWidget(context),
+                  model.board != null ? _boardWidget(model, context) : _loaderWidget(context),
                   _usersWidget(context, Game.P2, model.users[Game.P2]),
                 ],
               )));

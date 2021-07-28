@@ -36,8 +36,7 @@ class GameEngineLocal extends GameEngine {
 
   @override
   move(int position) {
-    if (_game.status() == Game.STATUS_NO_WINNERS_YET &&
-        _game.possibleMoves().contains(position)) {
+    if (_game.status() == Game.STATUS_NO_WINNERS_YET && _game.possibleMoves().contains(position)) {
       _game.performMove(position);
       _controller.add(_game);
     }
@@ -62,8 +61,7 @@ class GameEngineRemote extends GameEngine {
 
   @override
   move(int position) async {
-    if (_game.status() == Game.STATUS_NO_WINNERS_YET &&
-        _game.possibleMoves().contains(position)) {
+    if (_game.status() == Game.STATUS_NO_WINNERS_YET && _game.possibleMoves().contains(position)) {
       _game.performMove(position);
       _databaseService.updateGame(_gameId, _game);
     }

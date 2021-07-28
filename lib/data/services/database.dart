@@ -5,15 +5,9 @@ import '../models/user.dart';
 import '../models/user_status.dart';
 
 class DatabaseService {
-  late CollectionReference _usersRef;
-  late CollectionReference _statusRef;
-  late CollectionReference _gamesRef;
-
-  initialize() {
-    _usersRef = FirebaseFirestore.instance.collection('users');
-    _statusRef = FirebaseFirestore.instance.collection('user_status');
-    _gamesRef = FirebaseFirestore.instance.collection('games');
-  }
+  final CollectionReference _usersRef = FirebaseFirestore.instance.collection('users');
+  final CollectionReference _statusRef = FirebaseFirestore.instance.collection('user_status');
+  final CollectionReference _gamesRef = FirebaseFirestore.instance.collection('games');
 
   Future<void> createUser(User user) {
     return _usersRef.doc(user.id).set(user.toJson());
@@ -39,8 +33,7 @@ class DatabaseService {
     // if two waiting users,
     // then create a new game
     // and update their statuses
-    final snapshot =
-        await _statusRef.where('waiting', isEqualTo: true).limit(2).get();
+    final snapshot = await _statusRef.where('waiting', isEqualTo: true).limit(2).get();
     if (snapshot.size == 2) {
       final userIds = snapshot.docs.map((e) => e.id);
       await _createGame(userIds);
@@ -52,10 +45,7 @@ class DatabaseService {
     final gameRef = await _gamesRef.add(game.toJson());
     final gameId = gameRef.id;
 
-    final Map<String, String> users = {
-      Game.P1: userIds.first,
-      Game.P2: userIds.last
-    };
+    final Map<String, String> users = {Game.P1: userIds.first, Game.P2: userIds.last};
 
     await _gamesRef.doc(gameId).update({'users': users});
 
@@ -79,7 +69,6 @@ class DatabaseService {
       final userId = users[key] as String;
       result[key] = await _getUser(userId);
     }
-    print('getGameUsers $result');
     return result;
   }
 
@@ -105,5 +94,12 @@ class DatabaseService {
     result.sort((user1, user2) => user2.score - user1.score);
 
     return result;
+  }
+
+  Future<void> incrementScore(String id) async {
+    final snapshot = await _usersRef.doc(id).get();
+    final score = snapshot.get('score') as int?;
+    final updatedScore = (score ?? 0) + 1;
+    await _usersRef.doc(id).update({'score': updatedScore});
   }
 }

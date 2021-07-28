@@ -30,9 +30,7 @@ class LeaderboardView extends StatelessWidget {
 
   _userWidget(BuildContext context, User user, bool highlighted, int rank) {
     return ListTile(
-      tileColor: highlighted
-          ? Theme.of(context).highlightColor
-          : Theme.of(context).primaryColor,
+      tileColor: highlighted ? Theme.of(context).highlightColor : Theme.of(context).primaryColor,
       title: Text("$rank. ${user.name}"),
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(18.0),

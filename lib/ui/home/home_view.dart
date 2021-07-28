@@ -14,11 +14,7 @@ class HomeView extends StatelessWidget {
             builder: (context, model, child) => Scaffold(
                 appBar: AppBar(
                   title: Text("Tic Tac Toe Flutter"),
-                  actions: [
-                    IconButton(
-                        icon: Icon(Icons.logout),
-                        onPressed: () => model.logout())
-                  ],
+                  actions: [IconButton(icon: Icon(Icons.logout), onPressed: () => model.logout())],
                 ),
                 body: Center(
                   child: Column(
@@ -37,10 +33,8 @@ class HomeView extends StatelessWidget {
 
                       ElevatedButton(
                         style: ButtonStyle(
-                            padding: MaterialStateProperty.all(
-                                EdgeInsets.fromLTRB(32, 16, 32, 16)),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(RoundedRectangleBorder(
+                            padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(32, 16, 32, 16)),
+                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(60.0),
                             ))),
                         child: Text(
@@ -64,8 +58,7 @@ class HomeView extends StatelessWidget {
                         child: Text(
                           "LEADERBOARD",
                         ),
-                        onPressed: () =>
-                            Navigator.pushNamed(context, '/leaderboard'),
+                        onPressed: () => Navigator.pushNamed(context, '/leaderboard'),
                       ),
                     ],
                   ),
