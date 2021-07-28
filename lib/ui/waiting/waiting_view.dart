@@ -11,10 +11,7 @@ class WaitingView extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text("Tic Tac Toe Flutter"),
-          actions: [
-            IconButton(
-                icon: Icon(Icons.close_outlined), onPressed: () => model.exit())
-          ],
+          actions: [IconButton(icon: Icon(Icons.close_outlined), onPressed: () => model.exit())],
         ),
         body: Center(
           child: Column(

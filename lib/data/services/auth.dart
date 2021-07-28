@@ -21,6 +21,10 @@ class AuthService {
     return _auth.currentUser!.uid;
   }
 
+  String photoURL() {
+    return _auth.currentUser!.photoURL ?? '';
+  }
+
   Future<model.User> signInWithGoogle() async {
     UserCredential userCredential;
     if (kIsWeb) {
@@ -30,15 +34,13 @@ class AuthService {
       userCredential = await _auth.signInWithPopup(googleProvider);
     } else {
       // Trigger the authentication flow
-      final GoogleSignInAccount? googleUser =
-          await GoogleSignIn(scopes: []).signIn();
+      final GoogleSignInAccount? googleUser = await GoogleSignIn(scopes: []).signIn();
       if (googleUser == null) {
         throw ('Missing google user');
       }
 
       // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
       // Create a new credential
       final googleAuthCredential = GoogleAuthProvider.credential(
@@ -53,8 +55,7 @@ class AuthService {
     final user = userCredential.user;
     print('signInWithGoogle: ${user!.displayName}');
 
-    return model.User(
-        user.uid, user.displayName ?? user.uid, user.photoURL ?? '', 0);
+    return model.User(user.uid, user.displayName ?? user.uid, user.photoURL ?? '', 0);
   }
 
   Future<void> signOut() {

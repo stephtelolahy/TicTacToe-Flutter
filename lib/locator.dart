@@ -6,11 +6,6 @@ import 'data/services/database.dart';
 GetIt locator = GetIt.instance;
 
 void setupLocator() {
-  locator.registerLazySingleton(() {
-    final databaseService = DatabaseService();
-    databaseService.initialize();
-    return databaseService;
-  });
-
+  locator.registerLazySingleton(() => DatabaseService());
   locator.registerLazySingleton(() => AuthService());
 }

@@ -17,8 +17,9 @@ class GameModel extends ChangeNotifier {
 
   late GameEngine _engine;
   late String _controlledPlayer;
-  late MiniMaxAi _ai;
-  late String _aiPlayer;
+  late String _opponentPlayer;
+
+  MiniMaxAi? _ai;
 
   Game? _game;
   Message? _message;
@@ -28,15 +29,23 @@ class GameModel extends ChangeNotifier {
 
   Message? get message => _message;
 
-  initializeLocalGame() {
+  Map<String, User> get users => _users;
+
+  String get controlledPlayer => _controlledPlayer;
+
+  String get opponentPlayer => _opponentPlayer;
+
+  initializeLocalGame(String player) {
     final game = Game.newGame();
     _engine = GameEngineLocal(game: game);
     _engine.initialize();
 
-    _controlledPlayer = Game.P1;
+    _controlledPlayer = player;
+    _opponentPlayer = Game.opponent(player);
 
-    _aiPlayer = Game.P2;
     _ai = MiniMaxAi();
+
+    _users = {Game.P1: User('', _authService.userName(), _authService.photoURL(), 0), Game.P2: User('', 'CPU', '', 0)};
 
     _engine.gameStream.listen((game) {
       _game = game;
@@ -44,21 +53,18 @@ class GameModel extends ChangeNotifier {
       notifyListeners();
       _runAi();
     });
-
-    _users = {
-      Game.P1: User('0', 'You', '', 0),
-      Game.P2: User('1', 'CPU', '', 0)
-    };
   }
 
-  initializeRemoteGame(String gameId, String controlledPlayer) {
+  initializeRemoteGame(String gameId, String player) {
     _engine = GameEngineRemote(gameId: gameId);
     _engine.initialize();
-    _controlledPlayer = controlledPlayer;
+    _controlledPlayer = player;
+    _opponentPlayer = Game.opponent(player);
 
     _engine.gameStream.listen((game) {
       _game = game;
       _message = _buildMessage(game);
+      _updateScoreIfGameOver(game);
       notifyListeners();
     });
 
@@ -87,19 +93,24 @@ class GameModel extends ChangeNotifier {
 
   tap(int position) {
     final game = _game!;
-    if (game.turn == _controlledPlayer &&
-        game.status() == Game.STATUS_NO_WINNERS_YET) {
+    if (game.turn == _controlledPlayer && game.status() == Game.STATUS_NO_WINNERS_YET) {
       _engine.move(position);
     }
   }
 
   _runAi() {
     final game = _game!;
-    if (game.turn == _aiPlayer && game.status() == Game.STATUS_NO_WINNERS_YET) {
-      int bestMove = _ai.findBestMove(game);
+    if (_ai != null && game.turn == _opponentPlayer && game.status() == Game.STATUS_NO_WINNERS_YET) {
+      int bestMove = _ai!.findBestMove(game);
       Future.delayed(const Duration(milliseconds: 1000), () {
         _engine.move(bestMove);
       });
+    }
+  }
+
+  _updateScoreIfGameOver(Game game) {
+    if (game.status() == _controlledPlayer) {
+      _databaseService.incrementScore(_authService.userId());
     }
   }
 

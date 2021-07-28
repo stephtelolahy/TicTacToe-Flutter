@@ -43,9 +43,7 @@ class Game {
 
   String status() {
     for (var row in _WIN_CONDITIONS) {
-      if (board[row[0]] != EMPTY_SPACE &&
-          board[row[0]] == board[row[1]] &&
-          board[row[0]] == board[row[2]]) {
+      if (board[row[0]] != EMPTY_SPACE && board[row[0]] == board[row[1]] && board[row[0]] == board[row[2]]) {
         return board[row[0]];
       }
     }
