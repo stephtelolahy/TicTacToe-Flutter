@@ -20,13 +20,19 @@ class LeaderboardView extends StatelessWidget {
                   ),
                   body: ListView.builder(
                       itemCount: model.users.length,
-                      itemBuilder: (context, index) =>
-                          _userWidget(context, model.users[index])),
+                      itemBuilder: (context, index) {
+                        final user = model.users[index];
+                        final highlighted = model.userId == user.id;
+                        return _userWidget(context, user, highlighted);
+                      }),
                 )));
   }
 
-  _userWidget(BuildContext context, User user) {
+  _userWidget(BuildContext context, User user, bool highlighted) {
     return ListTile(
+      tileColor: highlighted
+          ? Theme.of(context).highlightColor
+          : Theme.of(context).primaryColor,
       title: Text(user.name),
       leading: Icon(Icons.face),
       trailing: Text(
