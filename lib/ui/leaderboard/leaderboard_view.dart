@@ -23,21 +23,28 @@ class LeaderboardView extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final user = model.users[index];
                         final highlighted = model.userId == user.id;
-                        return _userWidget(context, user, highlighted);
+                        return _userWidget(context, user, highlighted, index + 1);
                       }),
                 )));
   }
 
-  _userWidget(BuildContext context, User user, bool highlighted) {
+  _userWidget(BuildContext context, User user, bool highlighted, int rank) {
     return ListTile(
       tileColor: highlighted
           ? Theme.of(context).highlightColor
           : Theme.of(context).primaryColor,
-      title: Text(user.name),
-      leading: Icon(Icons.face),
+      title: Text("$rank. ${user.name}"),
+      leading: ClipRRect(
+        borderRadius: BorderRadius.circular(18.0),
+        child: Image.network(
+          user.photoURL,
+          height: 36.0,
+          width: 36.0,
+        ),
+      ),
       trailing: Text(
-        '${user.score}',
-        style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+        "${user.score}",
+        style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
       ),
     );
   }

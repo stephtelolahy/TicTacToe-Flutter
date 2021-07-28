@@ -35,11 +35,10 @@ class GameView extends StatelessWidget {
           body: Container(
               constraints: BoxConstraints.expand(),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _usersWidget(context, Game.P1, model.users[Game.P1]),
                   Padding(
-                    padding: const EdgeInsets.all(48),
+                    padding: const EdgeInsets.all(24),
                     child: Text(model.message?.displayText() ?? '',
                         style: TextStyle(fontSize: 25)),
                   ),
@@ -89,7 +88,19 @@ class GameView extends StatelessWidget {
       return Container();
     }
 
-    return Text("$player - ${user.name}", style: TextStyle(fontSize: 17));
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        ClipRRect(
+            borderRadius: BorderRadius.circular(18.0),
+            child: Image.network(
+              user.photoURL,
+              height: 36.0,
+              width: 36.0,
+            )),
+        Text("$player ${user.name}", style: TextStyle(fontSize: 17)),
+      ],
+    );
   }
 }
 
