@@ -21,6 +21,10 @@ class AuthService {
     return _auth.currentUser!.uid;
   }
 
+  String photoURL() {
+    return _auth.currentUser!.photoURL ?? '';
+  }
+
   Future<model.User> signInWithGoogle() async {
     UserCredential userCredential;
     if (kIsWeb) {

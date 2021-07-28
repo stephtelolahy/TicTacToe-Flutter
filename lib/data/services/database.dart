@@ -97,9 +97,7 @@ class DatabaseService {
   }
 
   Future<void> incrementScore(String id) async {
-    final snapshot = await _usersRef.doc(id).get();
-    final score = snapshot.get('score') as int?;
-    final updatedScore = (score ?? 0) + 1;
-    await _usersRef.doc(id).update({'score': updatedScore});
+    final user = await _getUser(id);
+    await _usersRef.doc(id).update({'score': user.score + 1});
   }
 }

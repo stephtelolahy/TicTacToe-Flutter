@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../data/models/game.dart';
 import '../../data/models/user.dart';
 import 'game_model.dart';
 import 'widget/field_widget.dart';
@@ -32,13 +31,13 @@ class GameView extends StatelessWidget {
               constraints: BoxConstraints.expand(),
               child: Column(
                 children: [
-                  _usersWidget(context, Game.P1, model.users[Game.P1]),
+                  _usersWidget(context, model.opponentPlayer, model.users[model.opponentPlayer]),
                   Padding(
                     padding: const EdgeInsets.all(24),
                     child: Text(model.message?.displayText() ?? '', style: TextStyle(fontSize: 25)),
                   ),
                   model.board != null ? _boardWidget(model, context) : _loaderWidget(context),
-                  _usersWidget(context, Game.P2, model.users[Game.P2]),
+                  _usersWidget(context, model.controlledPlayer, model.users[model.controlledPlayer]),
                 ],
               )));
     }));
@@ -86,11 +85,13 @@ class GameView extends StatelessWidget {
       children: [
         ClipRRect(
             borderRadius: BorderRadius.circular(18.0),
-            child: Image.network(
-              user.photoURL,
-              height: 36.0,
-              width: 36.0,
-            )),
+            child: user.photoURL.isNotEmpty
+                ? Image.network(
+                    user.photoURL,
+                    height: 36.0,
+                    width: 36.0,
+                  )
+                : Icon(Icons.face)),
         Text("$player ${user.name}", style: TextStyle(fontSize: 17)),
       ],
     );
