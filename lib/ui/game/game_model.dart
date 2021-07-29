@@ -119,7 +119,7 @@ class GameModel extends ChangeNotifier {
     }
   }
 
-  exit() {
-    _databaseService.setStatus(_authService.userId(), UserStatusIdle());
+  Future<void> exit() {
+    return _databaseService.setStatus(_authService.userId(), UserStatusIdle());
   }
 }

@@ -13,41 +13,43 @@ class GameArguments {
 }
 
 class GameView extends StatelessWidget {
-  final String gameId;
-  final String player;
+  final GameArguments args;
 
-  GameView(this.gameId, this.player);
+  GameView(this.args);
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<GameModel>(create: (context) {
       final model = GameModel();
-      if (gameId.isNotEmpty) {
-        model.initializeRemoteGame(gameId, player);
+      if (args.gameId.isNotEmpty) {
+        model.initializeRemoteGame(args.gameId, args.player);
       } else {
         model.initializeLocalGame();
       }
       return model;
     }, child: Consumer<GameModel>(builder: (context, model, child) {
-      return Scaffold(
-          appBar: AppBar(
-            title: Text("Tic Tac Toe Flutter"),
-            actions: [IconButton(onPressed: () => model.exit(), icon: Icon(Icons.close_outlined))],
-          ),
-          body: Container(
-              constraints: BoxConstraints.expand(),
-              child: Column(
-                children: [
-                  _usersWidget(context, model.opponentPlayer, model.users[model.opponentPlayer]),
-                  Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text(model.message?.displayText() ?? '', style: TextStyle(fontSize: 25)),
-                  ),
-                  model.board != null ? _boardWidget(model, context) : _loaderWidget(context),
-                  _usersWidget(
-                      context, model.controlledPlayer, model.users[model.controlledPlayer]),
-                ],
-              )));
+      return WillPopScope(
+          onWillPop: () => _onBackPressed(context, model),
+          child: Scaffold(
+              appBar: AppBar(
+                title: Text("Tic Tac Toe Flutter"),
+              ),
+              body: Container(
+                  constraints: BoxConstraints.expand(),
+                  child: Column(
+                    children: [
+                      _usersWidget(
+                          context, model.opponentPlayer, model.users[model.opponentPlayer]),
+                      Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Text(model.message?.displayText() ?? '',
+                            style: TextStyle(fontSize: 25)),
+                      ),
+                      model.board != null ? _boardWidget(model, context) : _loaderWidget(context),
+                      _usersWidget(
+                          context, model.controlledPlayer, model.users[model.controlledPlayer]),
+                    ],
+                  ))));
     }));
   }
 
@@ -103,6 +105,11 @@ class GameView extends StatelessWidget {
         Text("$player ${user.name}", style: TextStyle(fontSize: 17)),
       ],
     );
+  }
+
+  Future<bool> _onBackPressed(BuildContext context, GameModel model) async {
+    await model.exit();
+    return true;
   }
 }
 

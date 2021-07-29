@@ -10,10 +10,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => MainView());
     case '/game':
       return MaterialPageRoute(builder: (_) {
-        final args = settings.arguments as GameArguments?;
-        final gameId = args?.gameId ?? '';
-        final player = args?.player ?? '';
-        return GameView(gameId, player);
+        final args = settings.arguments as GameArguments? ?? GameArguments('', '');
+        return GameView(args);
       });
     case '/leaderboard':
       return MaterialPageRoute(builder: (_) => LeaderboardView());
