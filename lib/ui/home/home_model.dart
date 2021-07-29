@@ -9,7 +9,22 @@ class HomeModel extends ChangeNotifier {
   final _authService = locator<AuthService>();
   final _databaseService = locator<DatabaseService>();
 
+  UserStatus _status = UserStatusIdle();
+
   String get userName => _authService.userName();
+
+  UserStatus get status => _status;
+
+  initialize() {
+    _databaseService.userStatusStream(_authService.userId()).listen((status) {
+      _status = status;
+      notifyListeners();
+    });
+  }
+
+  cancelWaiting() {
+    _databaseService.setStatus(_authService.userId(), UserStatusIdle());
+  }
 
   logout() {
     _authService.signOut();
