@@ -5,20 +5,27 @@ import '../../data/models/user.dart';
 import 'game_model.dart';
 import 'widget/field_widget.dart';
 
-class GameView extends StatelessWidget {
-  final String? gameId;
+class GameArguments {
+  final String gameId;
   final String player;
 
-  GameView({this.gameId, required this.player});
+  GameArguments(this.gameId, this.player);
+}
+
+class GameView extends StatelessWidget {
+  final String gameId;
+  final String player;
+
+  GameView(this.gameId, this.player);
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<GameModel>(create: (context) {
       final model = GameModel();
-      if (gameId != null) {
-        model.initializeRemoteGame(gameId!, player);
+      if (gameId.isNotEmpty) {
+        model.initializeRemoteGame(gameId, player);
       } else {
-        model.initializeLocalGame(player);
+        model.initializeLocalGame();
       }
       return model;
     }, child: Consumer<GameModel>(builder: (context, model, child) {
@@ -37,7 +44,8 @@ class GameView extends StatelessWidget {
                     child: Text(model.message?.displayText() ?? '', style: TextStyle(fontSize: 25)),
                   ),
                   model.board != null ? _boardWidget(model, context) : _loaderWidget(context),
-                  _usersWidget(context, model.controlledPlayer, model.users[model.controlledPlayer]),
+                  _usersWidget(
+                      context, model.controlledPlayer, model.users[model.controlledPlayer]),
                 ],
               )));
     }));

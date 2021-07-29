@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
+import 'package:tictactoe/ui/game/game_view.dart';
 
 import '../../data/models/user_status.dart';
 import 'home_model.dart';
@@ -39,7 +40,8 @@ class HomeView extends StatelessWidget {
                 ElevatedButton(
                   style: ButtonStyle(
                       padding: MaterialStateProperty.all(EdgeInsets.fromLTRB(32, 16, 32, 16)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
+                      shape:
+                          MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(60.0),
                       ))),
                   child: Text(
@@ -72,11 +74,14 @@ class HomeView extends StatelessWidget {
   }
 
   _handleStatus(HomeModel model, context) {
-    if (model.status is UserStatusWaiting) {
+    final status = model.status;
+    if (status is UserStatusWaiting) {
       _showLoadingDialog(model, context);
-    } else if (model.status is UserStatusPlaying) {
-      Navigator.pushNamed(context, '/game');
-      //return GameView(gameId: status.gameId, player: status.player);
+    } else if (status is UserStatusPlaying) {
+      Navigator.maybePop(context).then((_) {
+        Navigator.pushNamed(context, '/game',
+            arguments: GameArguments(status.gameId, status.player));
+      });
     }
   }
 
@@ -103,7 +108,7 @@ class HomeView extends StatelessWidget {
             TextButton(
               child: const Text('Cancel'),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.pop(context);
                 model.cancelWaiting();
               },
             ),

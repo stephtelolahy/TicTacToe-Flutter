@@ -19,7 +19,8 @@ class FieldWidget extends StatelessWidget {
     );
   }
 
-  final BorderSide _borderSide = BorderSide(color: Colors.amber, width: 2.0, style: BorderStyle.solid);
+  final BorderSide _borderSide =
+      BorderSide(color: Colors.amber, width: 2.0, style: BorderStyle.solid);
 
   Border _borderAt(int idx) {
     Border border = Border.all();
@@ -38,7 +39,8 @@ class FieldWidget extends StatelessWidget {
         border = Border(bottom: _borderSide, right: _borderSide, top: _borderSide);
         break;
       case 4:
-        border = Border(left: _borderSide, bottom: _borderSide, right: _borderSide, top: _borderSide);
+        border =
+            Border(left: _borderSide, bottom: _borderSide, right: _borderSide, top: _borderSide);
         break;
       case 5:
         border = Border(left: _borderSide, bottom: _borderSide, top: _borderSide);

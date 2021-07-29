@@ -13,13 +13,13 @@ class MainView extends StatelessWidget {
       model.initialize();
       return model;
     }, child: Consumer<MainModel>(builder: (context, model, child) {
-      if (model.signedIn == null) {
+      if (model.authenticated == null) {
         return Scaffold(
           body: Center(
             child: CircularProgressIndicator(),
           ),
         );
-      } else if (model.signedIn == true) {
+      } else if (model.authenticated == true) {
         return HomeView();
       } else {
         return LoginView();

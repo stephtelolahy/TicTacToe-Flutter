@@ -35,17 +35,20 @@ class GameModel extends ChangeNotifier {
 
   String get opponentPlayer => _opponentPlayer;
 
-  initializeLocalGame(String player) {
+  initializeLocalGame() {
     final game = Game.newGame();
     _engine = GameEngineLocal(game: game);
     _engine.initialize();
 
-    _controlledPlayer = player;
-    _opponentPlayer = Game.opponent(player);
+    _controlledPlayer = Game.P1;
+    _opponentPlayer = Game.P2;
 
     _ai = MiniMaxAi();
 
-    _users = {Game.P1: User('', _authService.userName(), _authService.photoURL(), 0), Game.P2: User('', 'CPU', '', 0)};
+    _users = {
+      Game.P1: User('', _authService.userName(), _authService.photoURL(), 0),
+      Game.P2: User('', 'CPU', '', 0)
+    };
 
     _engine.gameStream.listen((game) {
       _game = game;
@@ -100,7 +103,9 @@ class GameModel extends ChangeNotifier {
 
   _runAi() {
     final game = _game!;
-    if (_ai != null && game.turn == _opponentPlayer && game.status() == Game.STATUS_NO_WINNERS_YET) {
+    if (_ai != null &&
+        game.turn == _opponentPlayer &&
+        game.status() == Game.STATUS_NO_WINNERS_YET) {
       int bestMove = _ai!.findBestMove(game);
       Future.delayed(const Duration(milliseconds: 1000), () {
         _engine.move(bestMove);

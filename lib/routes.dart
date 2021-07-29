@@ -1,12 +1,26 @@
 import 'package:flutter/material.dart';
 
-import 'data/models/game.dart';
 import 'ui/game/game_view.dart';
 import 'ui/leaderboard/leaderboard_view.dart';
 import 'ui/main/main_view.dart';
 
-Map<String, WidgetBuilder> routes() => <String, WidgetBuilder>{
-      '/': (BuildContext context) => MainView(),
-      '/game': (BuildContext context) => GameView(gameId: null, player: Game.P1),
-      '/leaderboard': (BuildContext context) => LeaderboardView(),
-    };
+Route<dynamic> generateRoute(RouteSettings settings) {
+  switch (settings.name) {
+    case '/':
+      return MaterialPageRoute(builder: (_) => MainView());
+    case '/game':
+      return MaterialPageRoute(builder: (_) {
+        final args = settings.arguments as GameArguments?;
+        final gameId = args?.gameId ?? '';
+        final player = args?.player ?? '';
+        return GameView(gameId, player);
+      });
+    case '/leaderboard':
+      return MaterialPageRoute(builder: (_) => LeaderboardView());
+    default:
+      return MaterialPageRoute(
+          builder: (_) => Scaffold(
+                body: Center(child: Text('No route defined for ${settings.name}')),
+              ));
+  }
+}

@@ -7,13 +7,13 @@ import '../../locator.dart';
 class MainModel extends ChangeNotifier {
   final _authService = locator<AuthService>();
 
-  bool? _signedIn;
+  bool? _authenticated;
 
-  bool? get signedIn => _signedIn;
+  bool? get authenticated => _authenticated;
 
   initialize() async {
     _authService.observeAuthState((userId) {
-      _signedIn = userId != null;
+      _authenticated = userId != null;
       notifyListeners();
     });
   }
