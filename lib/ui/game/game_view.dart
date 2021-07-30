@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../data/models/user.dart';
 import 'game_model.dart';
+import 'widget/avatar_widget.dart';
 import 'widget/field_widget.dart';
 
 class GameArguments {
@@ -93,15 +94,7 @@ class GameView extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        ClipRRect(
-            borderRadius: BorderRadius.circular(18.0),
-            child: user.photoURL.isNotEmpty
-                ? Image.network(
-                    user.photoURL,
-                    height: 36.0,
-                    width: 36.0,
-                  )
-                : Icon(Icons.face)),
+        AvatarWidget(user.photoURL),
         Text("$player ${user.name}", style: TextStyle(fontSize: 17)),
       ],
     );
