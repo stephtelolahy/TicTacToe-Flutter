@@ -3,10 +3,10 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:provider/provider.dart';
-import 'package:tictactoe/data/models/user.dart';
 
 import '../../data/models/user_status.dart';
 import '../game/game_view.dart';
+import '../game/widget/avatar_widget.dart';
 import 'home_model.dart';
 
 class HomeView extends StatelessWidget {
@@ -18,7 +18,7 @@ class HomeView extends StatelessWidget {
       return model;
     }, child: Consumer<HomeModel>(builder: (context, model, child) {
       SchedulerBinding.instance?.addPostFrameCallback((_) {
-        _handleStatus(model, context);
+        _navigateIfNeeded(model, context);
       });
       return Scaffold(
           appBar: AppBar(
@@ -26,7 +26,7 @@ class HomeView extends StatelessWidget {
             actions: model.user != null
                 ? [
                     IconButton(
-                        icon: _userAvatar(model.user!),
+                        icon: AvatarWidget(model.user!.photoURL),
                         onPressed: () => _showSignOutDialog(model, context))
                   ]
                 : null,
@@ -85,17 +85,7 @@ class HomeView extends StatelessWidget {
     }));
   }
 
-  Widget _userAvatar(User user) {
-    return ClipRRect(
-        borderRadius: BorderRadius.circular(18.0),
-        child: Image.network(
-          user.photoURL,
-          height: 36.0,
-          width: 36.0,
-        ));
-  }
-
-  _handleStatus(HomeModel model, context) {
+  _navigateIfNeeded(HomeModel model, context) {
     final status = model.status;
     if (status is UserStatusWaiting) {
       _showLoadingDialog(model, context);
