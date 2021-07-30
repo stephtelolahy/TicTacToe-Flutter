@@ -94,8 +94,11 @@ class GameView extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
+        Text(player, style: TextStyle(fontSize: 17)),
+        SizedBox(width: 8),
         AvatarWidget(user.photoURL),
-        Text("$player ${user.name}", style: TextStyle(fontSize: 17)),
+        SizedBox(width: 8),
+        Text(user.name, style: TextStyle(fontSize: 17)),
       ],
     );
   }

@@ -10,7 +10,8 @@ class DatabaseService {
   final CollectionReference _gamesRef = FirebaseFirestore.instance.collection('games');
 
   Future<void> createUser(User user) {
-    return _usersRef.doc(user.id).set(user.toJson());
+    // if exists then update, else create
+    return _usersRef.doc(user.id).set(user.toJson(), SetOptions(merge: true));
   }
 
   Future<void> setStatus(String id, UserStatus status) {
