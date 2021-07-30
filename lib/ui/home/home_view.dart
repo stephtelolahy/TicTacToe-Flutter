@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
-import 'package:tictactoe/ui/game/game_view.dart';
 
 import '../../data/models/user_status.dart';
+import '../game/game_view.dart';
 import 'home_model.dart';
 
 class HomeView extends StatelessWidget {

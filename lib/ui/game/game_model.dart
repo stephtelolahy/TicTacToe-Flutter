@@ -5,14 +5,12 @@ import '../../data/engine/minimax_ai.dart';
 import '../../data/models/game.dart';
 import '../../data/models/user.dart';
 import '../../data/models/user_status.dart';
-import '../../data/services/auth.dart';
 import '../../data/services/database.dart';
 import '../../locator.dart';
 
 enum Message { yourTurn, opponentTurn, win, loose, draw }
 
 class GameModel extends ChangeNotifier {
-  final _authService = locator<AuthService>();
   final _databaseService = locator<DatabaseService>();
 
   late GameEngine _engine;
@@ -45,10 +43,7 @@ class GameModel extends ChangeNotifier {
 
     _ai = MiniMaxAi();
 
-    _users = {
-      Game.P1: User('', _authService.userName(), _authService.photoURL(), 0),
-      Game.P2: User('', 'CPU', '', 0)
-    };
+    _users = {Game.P1: User('', 'You', '', 0), Game.P2: User('', 'CPU', '', 0)};
 
     _engine.gameStream.listen((game) {
       _game = game;
@@ -115,11 +110,18 @@ class GameModel extends ChangeNotifier {
 
   _updateScoreIfGameOver(Game game) {
     if (game.status() == _controlledPlayer) {
-      _databaseService.incrementScore(_authService.userId());
+      final userId = _users[_controlledPlayer]?.id;
+      if (userId != null && userId.isNotEmpty) {
+        _databaseService.incrementScore(userId);
+      }
     }
   }
 
-  Future<void> exit() {
-    return _databaseService.setStatus(_authService.userId(), UserStatusIdle());
+  Future<bool> exit() async {
+    final userId = _users[_controlledPlayer]?.id;
+    if (userId != null && userId.isNotEmpty) {
+      await _databaseService.setStatus(userId, UserStatusIdle());
+    }
+    return true;
   }
 }

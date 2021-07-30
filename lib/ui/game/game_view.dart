@@ -29,7 +29,7 @@ class GameView extends StatelessWidget {
       return model;
     }, child: Consumer<GameModel>(builder: (context, model, child) {
       return WillPopScope(
-          onWillPop: () => _onBackPressed(context, model),
+          onWillPop: () => model.exit(),
           child: Scaffold(
               appBar: AppBar(
                 title: Text("Tic Tac Toe Flutter"),
@@ -91,7 +91,7 @@ class GameView extends StatelessWidget {
     }
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         ClipRRect(
             borderRadius: BorderRadius.circular(18.0),
@@ -105,11 +105,6 @@ class GameView extends StatelessWidget {
         Text("$player ${user.name}", style: TextStyle(fontSize: 17)),
       ],
     );
-  }
-
-  Future<bool> _onBackPressed(BuildContext context, GameModel model) async {
-    await model.exit();
-    return true;
   }
 }
 
