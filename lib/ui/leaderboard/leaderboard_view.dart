@@ -22,7 +22,7 @@ class LeaderboardView extends StatelessWidget {
                       itemCount: model.users.length,
                       itemBuilder: (context, index) {
                         final user = model.users[index];
-                        final highlighted = model.userId == user.id;
+                        final highlighted = model.selectedUserId == user.id;
                         return _userWidget(context, user, highlighted, index + 1);
                       }),
                 )));
