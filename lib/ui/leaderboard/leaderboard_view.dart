@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/models/user.dart';
+import '../game/widget/avatar_widget.dart';
 import 'leaderboard_model.dart';
 
 class LeaderboardView extends StatelessWidget {
@@ -32,14 +33,7 @@ class LeaderboardView extends StatelessWidget {
     return ListTile(
       tileColor: highlighted ? Theme.of(context).highlightColor : Theme.of(context).primaryColor,
       title: Text("$rank. ${user.name}"),
-      leading: ClipRRect(
-        borderRadius: BorderRadius.circular(18.0),
-        child: Image.network(
-          user.photoURL,
-          height: 36.0,
-          width: 36.0,
-        ),
-      ),
+      leading: AvatarWidget(user.photoURL),
       trailing: Text(
         "${user.score}",
         style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
