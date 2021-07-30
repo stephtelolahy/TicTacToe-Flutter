@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_signin_button/button_view.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:provider/provider.dart';
+import 'package:tictactoe/data/models/user.dart';
 
 import '../../data/models/user_status.dart';
 import '../game/game_view.dart';
@@ -20,7 +23,13 @@ class HomeView extends StatelessWidget {
       return Scaffold(
           appBar: AppBar(
             title: Text("Tic Tac Toe Flutter"),
-            actions: [IconButton(icon: Icon(Icons.logout), onPressed: () => model.logout())],
+            actions: model.user != null
+                ? [
+                    IconButton(
+                        icon: _userAvatar(model.user!),
+                        onPressed: () => _showSignOutDialog(model, context))
+                  ]
+                : null,
           ),
           body: Center(
             child: Column(
@@ -28,7 +37,7 @@ class HomeView extends StatelessWidget {
               children: [
                 // Welcome text
                 Text(
-                  "Welcome ${model.userName}!",
+                  "Welcome ${model.user?.name}!",
                   style: TextStyle(fontSize: 20),
                   textAlign: TextAlign.center,
                 ),
@@ -48,7 +57,8 @@ class HomeView extends StatelessWidget {
                     "PLAY",
                     style: TextStyle(fontSize: 20),
                   ),
-                  onPressed: () => model.playOnline(),
+                  onPressed: () =>
+                      model.user != null ? model.playOnline() : _showSignInDialog(model, context),
                 ),
                 SizedBox(
                   height: 40,
@@ -65,12 +75,24 @@ class HomeView extends StatelessWidget {
                   child: Text(
                     "LEADERBOARD",
                   ),
-                  onPressed: () => Navigator.pushNamed(context, '/leaderboard'),
+                  onPressed: model.user != null
+                      ? () => Navigator.pushNamed(context, '/leaderboard')
+                      : null,
                 ),
               ],
             ),
           ));
     }));
+  }
+
+  Widget _userAvatar(User user) {
+    return ClipRRect(
+        borderRadius: BorderRadius.circular(18.0),
+        child: Image.network(
+          user.photoURL,
+          height: 36.0,
+          width: 36.0,
+        ));
   }
 
   _handleStatus(HomeModel model, context) {
@@ -110,6 +132,75 @@ class HomeView extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context);
                 model.cancelWaiting();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showSignInDialog(HomeModel model, BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SingleChildScrollView(
+              child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("To play you will need to signIn first,", style: TextStyle(fontSize: 17)),
+                SizedBox(
+                  height: 40,
+                ),
+                SignInButton(
+                  Buttons.Google,
+                  onPressed: () {
+                    Navigator.pop(context);
+                    model.signInWithGoogle();
+                  },
+                )
+              ],
+            ),
+          )),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showSignOutDialog(HomeModel model, BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SingleChildScrollView(
+              child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Do you really want to signOut ?", style: TextStyle(fontSize: 17)),
+              ],
+            ),
+          )),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.pop(context),
+            ),
+            TextButton(
+              child: const Text('Yes'),
+              onPressed: () {
+                Navigator.pop(context);
+                model.signOut();
               },
             ),
           ],

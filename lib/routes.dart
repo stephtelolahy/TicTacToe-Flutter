@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'ui/game/game_view.dart';
+import 'ui/home/home_view.dart';
 import 'ui/leaderboard/leaderboard_view.dart';
-import 'ui/main/main_view.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case '/':
-      return MaterialPageRoute(builder: (_) => MainView());
+      return MaterialPageRoute(builder: (_) => HomeView());
     case '/game':
       return MaterialPageRoute(builder: (_) {
         final args = settings.arguments as GameArguments? ?? GameArguments('', '');
