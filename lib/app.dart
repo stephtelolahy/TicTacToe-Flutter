@@ -8,7 +8,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(brightness: Brightness.dark, primarySwatch: Colors.amber),
       initialRoute: '/',
-      routes: routes(),
+      onGenerateRoute: generateRoute,
     );
   }
 }

@@ -7,22 +7,18 @@ import '../models/user.dart' as model;
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  observeAuthState(void onChange(String? userId)) {
+  observeAuthState(void onChange(model.User? userId)) {
     _auth.authStateChanges().listen((User? user) {
-      onChange(user?.uid);
+      if (user != null) {
+        onChange(model.User(user.uid, user.displayName ?? '', user.photoURL ?? '', 0));
+      } else {
+        onChange(null);
+      }
     });
   }
 
-  String userName() {
-    return _auth.currentUser?.displayName ?? '';
-  }
-
-  String userId() {
-    return _auth.currentUser!.uid;
-  }
-
-  String photoURL() {
-    return _auth.currentUser!.photoURL ?? '';
+  String? userId() {
+    return _auth.currentUser?.uid;
   }
 
   Future<model.User> signInWithGoogle() async {

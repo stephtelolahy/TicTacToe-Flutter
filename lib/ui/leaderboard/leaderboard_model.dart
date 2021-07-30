@@ -13,7 +13,7 @@ class LeaderboardModel extends ChangeNotifier {
 
   List<User> get users => _users;
 
-  String get userId => _authService.userId();
+  String? get selectedUserId => _authService.userId();
 
   initialize() {
     _databaseService.getLeaderboard().then((value) {

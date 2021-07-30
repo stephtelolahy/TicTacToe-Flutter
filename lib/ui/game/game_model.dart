@@ -5,14 +5,12 @@ import '../../data/engine/minimax_ai.dart';
 import '../../data/models/game.dart';
 import '../../data/models/user.dart';
 import '../../data/models/user_status.dart';
-import '../../data/services/auth.dart';
 import '../../data/services/database.dart';
 import '../../locator.dart';
 
 enum Message { yourTurn, opponentTurn, win, loose, draw }
 
 class GameModel extends ChangeNotifier {
-  final _authService = locator<AuthService>();
   final _databaseService = locator<DatabaseService>();
 
   late GameEngine _engine;
@@ -35,17 +33,17 @@ class GameModel extends ChangeNotifier {
 
   String get opponentPlayer => _opponentPlayer;
 
-  initializeLocalGame(String player) {
+  initializeLocalGame() {
     final game = Game.newGame();
     _engine = GameEngineLocal(game: game);
     _engine.initialize();
 
-    _controlledPlayer = player;
-    _opponentPlayer = Game.opponent(player);
+    _controlledPlayer = Game.P1;
+    _opponentPlayer = Game.P2;
 
     _ai = MiniMaxAi();
 
-    _users = {Game.P1: User('', _authService.userName(), _authService.photoURL(), 0), Game.P2: User('', 'CPU', '', 0)};
+    _users = {Game.P1: User('', 'You', '', 0), Game.P2: User('', 'CPU', '', 0)};
 
     _engine.gameStream.listen((game) {
       _game = game;
@@ -100,7 +98,9 @@ class GameModel extends ChangeNotifier {
 
   _runAi() {
     final game = _game!;
-    if (_ai != null && game.turn == _opponentPlayer && game.status() == Game.STATUS_NO_WINNERS_YET) {
+    if (_ai != null &&
+        game.turn == _opponentPlayer &&
+        game.status() == Game.STATUS_NO_WINNERS_YET) {
       int bestMove = _ai!.findBestMove(game);
       Future.delayed(const Duration(milliseconds: 1000), () {
         _engine.move(bestMove);
@@ -110,11 +110,18 @@ class GameModel extends ChangeNotifier {
 
   _updateScoreIfGameOver(Game game) {
     if (game.status() == _controlledPlayer) {
-      _databaseService.incrementScore(_authService.userId());
+      final userId = _users[_controlledPlayer]?.id;
+      if (userId != null && userId.isNotEmpty) {
+        _databaseService.incrementScore(userId);
+      }
     }
   }
 
-  exit() {
-    _databaseService.setStatus(_authService.userId(), UserStatusIdle());
+  Future<bool> exit() async {
+    final userId = _users[_controlledPlayer]?.id;
+    if (userId != null && userId.isNotEmpty) {
+      await _databaseService.setStatus(userId, UserStatusIdle());
+    }
+    return true;
   }
 }
